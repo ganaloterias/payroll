@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Categoría para el módulo de seguridad HR -->
+    <record model="ir.module.category" id="module_category_hr_security">
+        <field name="name">HR Security</field>
+        <field name="description">Control de acceso para módulos de RRHH</field>
+        <field name="sequence">15</field>
+    </record>
+
+    <!-- Grupo Base de HR (Sin permisos por defecto) -->
+    <record id="group_hr_base" model="res.groups">
+        <field name="name">HR: Base Access</field>
+        <field name="category_id" ref="module_category_hr_security"/>
+        <field name="comment">Grupo base para usuarios de HR. Sin permisos a menos que se otorguen explícitamente.</field>
+    </record>
+
+    <!-- Grupo para Denegar Acceso a HR -->
+    <record id="group_hr_no_access" model="res.groups">
+        <field name="name">HR: No Access</field>
+        <field name="category_id" ref="module_category_hr_security"/>
+        <field name="comment">Usuarios en este grupo no deberían tener acceso a información de HR.</field>
+    </record>
+
+    <!-- Grupo para acceso de solo lectura a empleados -->
+    <record id="group_hr_employee_readonly" model="res.groups">
+        <field name="name">HR: Read-Only Access</field>
+        <field name="category_id" ref="module_category_hr_security"/>
+        <field name="implied_ids" eval="[(4, ref('group_hr_base'))]"/>
+        <field name="comment">Usuarios con acceso de solo lectura a empleados</field>
+    </record>
+
+    <!-- Grupo para acceso completo a empleados -->
+    <record id="group_hr_employee_manager" model="res.groups">
+        <field name="name">HR: Full Access</field>
+        <field name="category_id" ref="module_category_hr_security"/>
+        <field name="implied_ids" eval="[(4, ref('group_hr_employee_readonly'))]"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+    <!-- Grupo para acceso de solo lectura a ausencias -->
+    <record id="group_hr_leave_readonly" model="res.groups">
+        <field name="name">Leave: Read-Only Access</field>
+        <field name="category_id" ref="module_category_hr_security"/>
+        <field name="implied_ids" eval="[(4, ref('group_hr_base'))]"/>
+        <field name="comment">Usuarios con acceso de solo lectura a ausencias</field>
+    </record>
+
+    <!-- Grupo para acceso completo a ausencias -->
+    <record id="group_hr_leave_manager" model="res.groups">
+        <field name="name">Leave: Full Access</field>
+        <field name="category_id" ref="module_category_hr_security"/>
+        <field name="implied_ids" eval="[(4, ref('group_hr_leave_readonly'))]"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+    <!-- Reglas de acceso para empleados -->
+    <record id="hr_employee_security_rule" model="ir.rule">
+        <field name="name">HR Employee Security Rule</field>
+        <field name="model_id" ref="hr.model_hr_employee"/>
+        <field name="domain_force">['!', ('id', 'in', user.env.ref('hr_security.group_hr_no_access').users.ids)]</field>
+        <field name="groups" eval="[(4, ref('group_hr_base'))]"/>
+    </record>
+
+    <!-- Reglas de acceso para ausencias -->
+    <record id="hr_leave_security_rule" model="ir.rule">
+        <field name="name">HR Leave Security Rule</field>
+        <field name="model_id" ref="hr_holidays.model_hr_leave"/>
+        <field name="domain_force">['!', ('id', 'in', user.env.ref('hr_security.group_hr_no_access').users.ids)]</field>
+        <field name="groups" eval="[(4, ref('group_hr_base'))]"/>
+    </record>
+</odoo> 
