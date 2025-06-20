@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Categoría de Seguridad -->
+        <record id="module_category_hr_loan" model="ir.module.category">
+            <field name="name">Gestión de Préstamos</field>
+            <field name="description">Gestión de préstamos de empleados</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- Grupo de Usuario -->
+        <record id="group_hr_loan_user" model="res.groups">
+            <field name="name">Usuario</field>
+            <field name="category_id" ref="module_category_hr_loan"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!-- Grupo de Administrador -->
+        <record id="group_hr_loan_manager" model="res.groups">
+            <field name="name">Administrador</field>
+            <field name="category_id" ref="module_category_hr_loan"/>
+            <field name="implied_ids" eval="[(4, ref('group_hr_loan_user'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        </record>
+    </data>
+</odoo> 

@@ -1,0 +1,6 @@
+<odoo>
+  <record id="hr_loan_deduction_category" model="hr.salary.rule.category">
+    <field name="name">Deducción por Préstamo</field>
+    <field name="code">LOAN_DED</field>
+  </record>
+</odoo>

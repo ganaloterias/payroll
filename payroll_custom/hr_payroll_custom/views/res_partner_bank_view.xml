@@ -1,0 +1,25 @@
+<odoo>
+    <record id="custom_view_partner_bank_form" model="ir.ui.view">
+        <field name="name">custom.view.partner.bank.form</field>
+        <field name="model">res.partner.bank</field>
+        <field name="inherit_id" ref="base.view_partner_bank_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='currency_id']" position="attributes" optional="1">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='allow_out_payment']" position="replace" optional="1">
+                <empty/>
+            </xpath>
+            <xpath expr="//group[field[@name='acc_number']]" position="inside" optional="1">
+                    <separator string="Información Bancaria" colspan="2"/>
+                    <field name="x_account_type" string="Tipo de Cuenta"/>
+                    <field name="x_payment_type" string="Tipo de Pago"/>
+                    <field name="x_identification_id" string="Cédula"/>
+                    <field name="x_beneficiary_email" string="Email del Beneficiario"/>
+                    <field name="x_credit_reference" string="N° de Referencia de Crédito"/>
+                    <field name="x_check_duration" string="Duración del Cheque (días)"/>
+                    <field name="allow_out_payment" string="Permitir Pagos Salientes"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,12 @@
+<odoo>
+  <record id="view_hr_payslip_tree_currency" model="ir.ui.view">
+    <field name="name">hr.payslip.tree.currency</field>
+    <field name="model">hr.payslip</field>
+    <field name="inherit_id" ref="payroll.hr_payslip_view_tree"/>
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='employee_id']" position="after">
+        <field name="currency_id" string="Moneda"/>
+      </xpath>
+    </field>
+  </record>
+</odoo>

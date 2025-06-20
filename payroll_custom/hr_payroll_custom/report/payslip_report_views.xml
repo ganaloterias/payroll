@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Heredamos el reporte de nómina original -->
+    <template id="report_payslip_custom" inherit_id="payroll.report_payslip">
+        <xpath expr="//div[hasclass('page')]" position="inside">
+            <!-- Aquí puedes agregar tus personalizaciones al reporte -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <h4>Información Adicional</h4>
+                    <table class="table table-sm">
+                        <tr>
+                            <th>Banco:</th>
+                            <td><t t-esc="doc.employee_id.bank_account_id.bank_id.name"/></td>
+                            <th>Cuenta:</th>
+                            <td><t t-esc="doc.employee_id.bank_account_id.acc_number"/></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+    <!-- Heredamos el reporte de detalles de nómina -->
+    <template id="report_payslipdetails_custom" inherit_id="payroll.report_payslipdetails">
+        <xpath expr="//div[hasclass('page')]" position="inside">
+            <!-- Aquí puedes agregar tus personalizaciones al reporte de detalles -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <h4>Desglose Adicional</h4>
+                    <!-- Agrega aquí el contenido personalizado -->
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo> 

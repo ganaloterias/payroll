@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_hr_liquidation_payment_wizard_form" model="ir.ui.view">
+    <field name="name">hr.liquidation.payment.wizard.form</field>
+    <field name="model">hr.liquidation.payment.wizard</field>
+    <field name="arch" type="xml">
+      <form string="Registrar Pago de Liquidación">
+        <group>
+          <field name="liquidation_id"/>
+          <field name="payment_date"/>
+          <field name="payment_reference"/>
+          <field name="payment_method"/>
+        </group>
+        <group string="Notas">
+          <field name="notes" nolabel="1"/>
+        </group>
+        <footer>
+          <button name="action_register_payment" string="Registrar Pago" type="object" class="btn-primary"/>
+          <button string="Cancelar" class="btn-secondary" special="cancel"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+  <record id="action_hr_liquidation_payment_wizard" model="ir.actions.act_window">
+    <field name="name">Registrar Pago</field>
+    <field name="res_model">hr.liquidation.payment.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+  </record>
+</odoo>

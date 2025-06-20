@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menú de Pagos de Vacaciones -->
+    <menuitem id="menu_hr_vacation_payout_root"
+              name="Pagos de Vacaciones"
+              parent="payroll.payroll_menu_root"
+              sequence="90"/>
+              
+    <!-- Submenú para ver todos los pagos -->
+    <menuitem id="menu_hr_vacation_payout_list"
+              name="Pagos de Vacaciones"
+              parent="menu_hr_vacation_payout_root"
+              action="action_hr_vacation_payout"
+              sequence="10"/>
+              
+    <!-- Submenú para ver el calendario de ausencias -->
+    <menuitem id="menu_hr_vacation_payout_absence_calendar"
+              name="Calendario de Ausencias"
+              parent="menu_hr_vacation_payout_root"
+              action="action_hr_vacation_payout_absences"
+              sequence="20"/>
+</odoo>

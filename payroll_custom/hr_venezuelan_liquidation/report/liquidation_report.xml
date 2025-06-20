@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_liquidation">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2 class="text-center">Liquidación de Haberes</h2>
+                        <div class="row mt32 mb32">
+                            <div class="col-6">
+                                <strong>Número:</strong> <span t-field="o.name"/><br/>
+                                <strong>Empleado:</strong> <span t-field="o.employee_id"/><br/>
+                                <strong>Período:</strong>
+                                <span t-field="o.date_start"/> al <span t-field="o.date_end"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Años de Servicio:</strong>
+                                <span t-field="o.work_period_years"/> años y
+                                <span t-field="o.work_period_months"/> meses<br/>
+                                <strong>Último Salario:</strong>
+                                <span t-field="o.last_wage"/>
+                                <span t-field="o.currency_id.symbol"/>
+                            </div>
+                        </div>
+
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Concepto</th>
+                                    <th class="text-right">Días</th>
+                                    <th class="text-right">Monto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.line_ids" t-as="line">
+                                    <td><span t-field="line.description"/></td>
+                                    <td class="text-right"><span t-field="line.days"/></td>
+                                    <td class="text-right">
+                                        <span t-field="line.amount"
+                                              t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="2" class="text-right"><strong>Total</strong></td>
+                                    <td class="text-right">
+                                        <strong>
+                                            <span t-field="o.total_liquidacion"
+                                                  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </strong>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <div class="row mt64">
+                            <div class="col-6">
+                                <p>_____________________</p>
+                                <p>Firma del Empleador</p>
+                            </div>
+                            <div class="col-6">
+                                <p>_____________________</p>
+                                <p>Firma del Trabajador</p>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_liquidation" model="ir.actions.report">
+        <field name="name">Liquidación</field>
+        <field name="model">hr.liquidation</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">hr_venezuelan_liquidation.report_liquidation</field>
+        <field name="report_file">hr_venezuelan_liquidation.report_liquidation</field>
+        <field name="print_report_name">'Liquidación - %s' % object.name</field>
+        <field name="binding_model_id" ref="model_hr_liquidation"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

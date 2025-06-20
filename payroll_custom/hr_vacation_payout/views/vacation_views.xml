@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista de Formulario -->
+    <record id="view_hr_vacation_payout_form" model="ir.ui.view">
+        <field name="name">hr.vacation.payout.form</field>
+        <field name="model">hr.vacation.payout</field>
+        <field name="arch" type="xml">
+            <form string="Pago de Vacaciones">
+                <header>
+                    <button name="action_validate" 
+                            string="Validar" 
+                            type="object" 
+                            class="oe_highlight" 
+                            invisible="state != 'draft'"/>
+                    <button name="action_done" 
+                            string="Marcar como Pagado" 
+                            type="object" 
+                            class="oe_highlight" 
+                            invisible="state != 'validated'"/>
+                    <button name="action_draft" 
+                            string="Volver a Borrador" 
+                            type="object" 
+                            invisible="state not in ['validated', 'rejected']"/>
+                    <button name="action_reject" 
+                            string="Rechazar" 
+                            type="object" 
+                            class="btn-danger" 
+                            invisible="state not in ['draft', 'validated']"/>
+                    <button name="action_view_employee" 
+                            string="Ver Empleado" 
+                            type="object" 
+                            class="btn-secondary"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,validated,done,rejected"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    
+                    <div class="alert alert-info" role="alert" invisible="calculation_details == False">
+                        <field name="calculation_details"/>
+                    </div>
+                    
+                    <group>
+                        <group>
+                            <field name="employee_id" 
+                                   options="{'no_create': True}" 
+                                   readonly="state != 'draft'" 
+                                   required="1"/>
+                            <field name="contract_id" readonly="1"/>
+                            <field name="date" 
+                                   readonly="state != 'draft'" 
+                                   required="1"/>
+                            <field name="work_years" 
+                                   readonly="1" 
+                                   widget="float_time"/>
+                        </group>
+                        <group>
+                            <field name="currency_id" 
+                                   options="{'no_create': True}"
+                                   readonly="state != 'draft'"/>
+                            <field name="last_wage" 
+                                   readonly="state != 'draft'" 
+                                   widget="monetary"/>
+                            <field name="vacation_days" 
+                                   readonly="state != 'draft'"/>
+                            <field name="vacation_bonus_days" 
+                                   readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Resumen" name="summary">
+                            <group>
+                                <group string="Montos Calculados" name="calculation">
+                                    <field name="vacation_amount" 
+                                           readonly="1" 
+                                           widget="monetary"/>
+                                    <field name="vacation_bonus_amount" 
+                                           readonly="1" 
+                                           widget="monetary"/>
+                                    <div class="o_td_label">
+                                    </div>
+                                    <field name="total_amount" 
+                                           readonly="1" 
+                                           widget="monetary" 
+                                           class="oe_subtotal_footer_separator"/>
+                                </group>
+                                <group string="Información Adicional" name="additional_info">
+                                    <field name="company_id" 
+                                           groups="base.group_multi_company" 
+                                           readonly="1"/>
+                                    <field name="last_slip_id" 
+                                           readonly="1" 
+                                           invisible="last_slip_id == False"/>
+                                    <field name="notes" 
+                                           placeholder="Observaciones..."/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Observaciones" name="notes">
+                            <field name="notes" nolabel="1" placeholder="Notas adicionales..."/>
+                        </page>
+                        <page string="Ausencias" name="leaves">
+                            <group>
+                                <group>
+                                    <field name="vacation_date_from" required="1"/>
+                                    <field name="vacation_date_to" required="1"/>
+                                    <field name="create_leave"/>
+                                </group>
+                                <group>
+                                    <field name="leave_id" readonly="1" invisible="leave_id == False"/>
+                                    <field name="leave_state" invisible="leave_id == False"/>
+                                    <button string="Ver Tipo de Ausencia" 
+                                            name="action_view_leave_type" 
+                                            type="object" 
+                                            class="btn btn-sm btn-secondary" 
+                                            invisible="leave_id == False"
+                                            icon="fa-info-circle"/>
+                                </group>
+                            </group>
+                            <div class="alert alert-info" role="alert" invisible="leave_id != False">
+                                <p><strong>Nota:</strong> Al validar el pago de vacaciones, se creará automáticamente un registro de ausencia para el empleado durante el período especificado.</p>
+                            </div>
+                            <div class="alert alert-success" role="alert" invisible="leave_id == False">
+                                <p><strong>Información:</strong> Se ha creado un registro de ausencia para este pago de vacaciones.</p>
+                                <p class="mt-2"><small><i class="fa fa-info-circle"/> Asegúrese de que el tipo de ausencia tenga un código asignado para evitar errores en la nómina.</small></p>
+                            </div>
+                        </page>
+                    </notebook>
+                    
+                    <notebook>
+                        <page string="Líneas de Pago" name="payment_lines">
+                            <field name="line_ids" readonly="state != 'draft'">
+                                <list editable="bottom">
+                                    <field name="description"/>
+                                    <field name="days" sum="Total Días"/>
+                                    <field name="amount" 
+                                           widget="monetary"/>
+                                    <field name="currency_id" invisible="1"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer">
+                                <field name="total_amount" 
+                                       readonly="1" 
+                                       widget="monetary" 
+                                       string="Total Calculado"
+                                       class="oe_subtotal_footer_separator"/>
+                            </group>
+                        </page>
+                        
+                        <page string="Historial" 
+                              name="history" 
+                              invisible="related_payouts == []">
+                            <field name="related_payouts">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="date"/>
+                                    <field name="vacation_days"/>
+                                    <field name="total_amount" widget="monetary"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="currency_id" invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        
+                        <page string="Mensajes" name="messages">
+                            <div class="oe_chatter">
+                                <field name="message_follower_ids"/>
+                                <field name="activity_ids"/>
+                                <field name="message_ids"/>
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+                <footer>
+                    <button string="Validar" name="action_validate" type="object" class="btn-primary" invisible="state != 'draft'"/>
+                    <button string="Volver a Borrador" name="action_draft" type="object" invisible="state == 'draft'"/>
+                    <button string="Rechazar" name="action_reject" type="object" invisible="state not in ['draft', 'validated']"/>
+                    <button string="Ver Ausencia" name="action_view_leave" type="object" class="btn-info" 
+                           invisible="leave_id == False" icon="fa-calendar"/>
+                    <button string="Cancelar Ausencia" name="action_cancel_leave" type="object" class="btn-warning"
+                           invisible="leave_id == False or leave_state in ['refuse', 'cancel']" icon="fa-times"/>
+                    <button string="Corregir Código" name="action_fix_leave_codes" type="object" class="btn-secondary"
+                           invisible="leave_id == False" icon="fa-wrench"/>
+                    <button string="Cerrar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista de Lista -->
+    <record id="view_hr_vacation_payout_tree" model="ir.ui.view">
+        <field name="name">hr.vacation.payout.tree</field>
+        <field name="model">hr.vacation.payout</field>
+        <field name="arch" type="xml">
+            <list string="Pagos de Vacaciones">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="date"/>
+                <field name="vacation_days" sum="Total Días"/>
+                <field name="vacation_bonus_days" optional="hide"/>
+                <field name="vacation_amount" 
+                       widget="monetary" 
+                       sum="Total" 
+                       optional="show"/>
+                <field name="vacation_bonus_amount" 
+                       widget="monetary" 
+                       sum="Total" 
+                       optional="hide"/>
+                <field name="total_amount" 
+                       widget="monetary" 
+                       sum="Total"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="state" 
+                       widget="badge" 
+                       decoration-success="state == 'done'" 
+                       decoration-info="state == 'validated'" 
+                       decoration-warning="state == 'draft'"
+                       decoration-danger="state == 'rejected'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vista de Búsqueda -->
+    <record id="view_hr_vacation_payout_search" model="ir.ui.view">
+        <field name="name">hr.vacation.payout.search</field>
+        <field name="model">hr.vacation.payout</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Pagos de Vacaciones">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="date"/>
+                <separator/>
+                <filter string="Borrador" 
+                        name="draft" 
+                        domain="[('state','=','draft')]"/>
+                <filter string="Validado" 
+                        name="validated" 
+                        domain="[('state','=','validated')]"/>
+                <filter string="Pagado" 
+                        name="done" 
+                        domain="[('state','=','done')]"/>
+                <filter string="Rechazado" 
+                        name="rejected" 
+                        domain="[('state','=','rejected')]"/>
+                <group expand="0" string="Agrupar Por">
+                    <filter string="Empleado" 
+                            name="employee" 
+                            context="{'group_by': 'employee_id'}"/>
+                    <filter string="Estado" 
+                            name="state" 
+                            context="{'group_by': 'state'}"/>
+                    <filter string="Mes" 
+                            name="month" 
+                            context="{'group_by': 'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Vista Kanban -->
+    <record id="view_hr_vacation_payout_kanban" model="ir.ui.view">
+        <field name="name">hr.vacation.payout.kanban</field>
+        <field name="model">hr.vacation.payout</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" quick_create="false">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="date"/>
+                <field name="vacation_days"/>
+                <field name="total_amount"/>
+                <field name="currency_id"/>
+                <field name="state"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_kanban_record_has_image_fill">
+                            <div class="oe_kanban_details d-flex flex-column">
+                                <div class="d-flex align-items-center mb-2">
+                                    <strong class="flex-grow-1"><field name="name"/></strong>
+                                    <span class="badge bg-warning" invisible="state != 'draft'">Borrador</span>
+                                    <span class="badge bg-info" invisible="state != 'validated'">Validado</span>
+                                    <span class="badge bg-success" invisible="state != 'done'">Pagado</span>
+                                    <span class="badge bg-danger" invisible="state != 'rejected'">Rechazado</span>
+                                </div>
+                                <div class="d-flex flex-column mb-2">
+                                    <span><b>Empleado:</b> <field name="employee_id"/></span>
+                                    <span><b>Fecha:</b> <field name="date"/></span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span><b>Días:</b> <field name="vacation_days"/></span>
+                                    <span><b>Total:</b> <field name="total_amount" widget="monetary"/></span>
+                                </div>
+                                <div class="o_kanban_record_bottom mt-2">
+                                    <div class="oe_kanban_bottom_right">
+                                        <button name="action_validate" 
+                                                string="Validar" 
+                                                type="object" 
+                                                class="btn btn-sm btn-primary" 
+                                                invisible="state != 'draft'"/>
+                                        <button name="action_done" 
+                                                string="Pagar" 
+                                                type="object" 
+                                                class="btn btn-sm btn-success" 
+                                                invisible="state != 'validated'"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Vista Calendario -->
+    <record id="view_hr_vacation_payout_calendar" model="ir.ui.view">
+        <field name="name">hr.vacation.payout.calendar</field>
+        <field name="model">hr.vacation.payout</field>
+        <field name="arch" type="xml">
+            <calendar string="Pagos de Vacaciones" 
+                     date_start="date" 
+                     color="employee_id" 
+                     mode="month"
+                     quick_create="0">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="vacation_days"/>
+                <field name="total_amount" widget="monetary"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="vacation_date_from"/> 
+                <field name="vacation_date_to"/>
+                <field name="leave_id"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Acción de Ventana -->
+    <record id="action_hr_vacation_payout" model="ir.actions.act_window">
+        <field name="name">Pagos de Vacaciones</field>
+        <field name="res_model">hr.vacation.payout</field>
+        <field name="view_mode">list,form,kanban,calendar</field>
+        <field name="context">{'search_default_draft': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No existen pagos de vacaciones registrados
+            </p>
+            <p>
+                Cree un nuevo pago de vacaciones utilizando el botón "Nuevo".
+            </p>
+        </field>
+    </record>
+    
+    <record id="view_hr_vacation_payout_calendar_absences" model="ir.ui.view">
+        <field name="name">hr.vacation.payout.calendar.absences</field>
+        <field name="model">hr.vacation.payout</field>
+        <field name="arch" type="xml">
+            <calendar string="Ausencias por Vacaciones" 
+                     date_start="vacation_date_from" 
+                     date_stop="vacation_date_to"
+                     color="employee_id" 
+                     mode="month"
+                     quick_create="0"
+                     hide_time="1">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="vacation_days"/>
+                <field name="total_amount" widget="monetary"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="leave_id"/>
+                <field name="leave_state"/>
+                <field name="state"/>
+                <field name="date" string="Fecha de Pago"/>
+            </calendar>
+        </field>
+    </record>
+    
+    <!-- Acción de Ventana para Calendario de Ausencias -->
+    <record id="action_hr_vacation_payout_absences" model="ir.actions.act_window">
+        <field name="name">Calendario de Ausencias</field>
+        <field name="res_model">hr.vacation.payout</field>
+        <field name="view_mode">calendar</field>
+        <field name="view_id" ref="view_hr_vacation_payout_calendar_absences"/>
+        <field name="domain">[('vacation_date_from', '!=', False), ('vacation_date_to', '!=', False)]</field>
+        <field name="context">{'calendar_view_mode': 'month'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay ausencias por vacaciones registradas
+            </p>
+            <p>
+                Las ausencias por vacaciones aparecerán aquí cuando se registren fechas en los pagos de vacaciones.
+            </p>
+        </field>
+    </record>
+</odoo> 

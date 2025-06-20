@@ -1,0 +1,31 @@
+# -*- coding: utf-8 -*-
+{
+    'name': 'Pago de Vacaciones Venezuela',
+    'version': '18.0.1.0.0',
+    'category': 'Human Resources/Payroll',
+    'summary': 'Módulo para gestionar el pago de vacaciones según la ley venezolana',
+    'author': 'Tu Empresa',
+    'website': 'https://www.tuempresa.com',
+    'license': 'LGPL-3',
+    'depends': [
+        'hr',
+        'mail',
+        'base',
+        'payroll',
+        'hr_holidays',
+        'hr_venezuelan_liquidation',
+    ],
+    'data': [
+        'security/vacation_security.xml',
+        'security/ir.model.access.csv',
+        'data/vacation_sequence.xml',
+        'wizard/vacation_payout_wizard_view.xml',
+        'views/vacation_views.xml',
+        'views/vacation_menu.xml',
+        'report/vacation_payout_report.xml',
+    ],
+    'demo': [],
+    'installable': True,
+    'application': True,
+    'auto_install': False,
+}

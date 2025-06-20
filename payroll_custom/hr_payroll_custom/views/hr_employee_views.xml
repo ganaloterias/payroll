@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="hr_employee_view_form_dependent_children" model="ir.ui.view">
+        <field name="name">hr.employee.view.form.dependent.children</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='personal_information']/group/group[@name='emergency']" position="after">
+                <group string="Información Familiar">
+                    <separator string="Hijos Dependientes"/>
+                    <field name="dependent_children_ids" widget="one2many_list"
+                        string="Hijos" options="{'no_create': True}" readonly="0"/>
+                    <button name="action_add_child" type="object"
+                        string="Añadir" class="btn-primary"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

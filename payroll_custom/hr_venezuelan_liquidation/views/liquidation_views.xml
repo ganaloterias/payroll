@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_hr_liquidation_form" model="ir.ui.view">
+    <field name="model">hr.liquidation</field>
+    <field name="arch" type="xml">
+      <form string="Liquidación">
+        <header>
+          <button name="action_validate" string="Validar" type="object" class="oe_highlight" invisible="state not in ['draft']"/>
+          <button name="action_done"     string="Finalizar" type="object" class="oe_highlight" invisible="state not in ['validated']"/>
+          <field name="state" widget="statusbar"/>
+        </header>
+        <sheet>
+          <group>
+            <group>
+              <field name="employee_id"          readonly="state!='draft'"/>
+              <field name="liquidation_type"     readonly="state!='draft'"/>
+              <field name="contract_start_date"  readonly="1"/>
+              <field name="contract_end_date"    readonly="1"/>
+            </group>
+            <group>
+              <field name="date_start"           readonly="state!='draft'"/>
+              <field name="date_end"             readonly="state!='draft'"/>
+              <field name="currency_id"          readonly="state!='draft'"/>
+              <field name="last_wage"            readonly="state!='draft'"/>
+            </group>
+          </group>
+          <notebook>
+            <page string="Montos">
+              <group>
+                <field name="prestaciones_monto"/>
+                <field name="vacaciones_monto"/>
+                <field name="bono_vacacional_monto"/>
+                <field name="preaviso_monto"/>
+                <field name="total_liquidacion"/>
+              </group>
+            </page>
+            <page string="Líneas">
+              <field name="line_ids">
+                <list editable="bottom">
+                  <field name="description"/>
+                  <field name="days"/>
+                  <field name="amount"/>
+                </list>
+              </field>
+            </page>
+          </notebook>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_hr_liquidation" model="ir.actions.act_window">
+    <field name="name">Liquidaciones</field>
+    <field name="res_model">hr.liquidation</field>
+    <field name="view_mode">list,form</field>
+  </record>
+</odoo>

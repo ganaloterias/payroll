@@ -1,0 +1,6 @@
+<odoo>
+  <menuitem id="menu_liquidaciones_root"
+            name="Liquidaciones"
+            parent="hr.menu_hr_root"
+            sequence="90"/>
+</odoo>

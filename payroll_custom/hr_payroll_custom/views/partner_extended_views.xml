@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+  <record id="payroll_res_partner_extended" model="ir.ui.view">
+    <field name="name">res.partner.payroll.bankdata.tab</field>
+    <field name="model">res.partner</field>
+    <field name="inherit_id" ref="base.view_partner_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//notebook" position="inside">
+        <page string="Datos de la Cuenta">
+          <group>
+            <field name="ordenante_account_number"/>
+            <field name="type_account"/>
+            <field name="ref_lot"/>
+            <field name="number_negotiation"/>
+          </group>
+        </page>
+      </xpath>
+    </field>
+  </record>
+</odoo>

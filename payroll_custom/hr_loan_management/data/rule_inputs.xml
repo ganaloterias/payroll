@@ -1,0 +1,24 @@
+<odoo>
+  <!-- Definir primero la categoría de deducción (loan_deduction_category.xml se carga antes) -->
+  <record id="hr_salary_rule_prestamo" model="hr.salary.rule">
+    <field name="name">Descuento por Préstamo</field>
+    <field name="code">PRESTAMO</field>
+    <field name="sequence">150</field>
+    <field name="category_id" ref="hr_loan_deduction_category"/>
+    <field name="condition_select">python</field>
+    <field name="condition_python">
+        result = inputs.PRESTAMO and inputs.PRESTAMO.amount > 0
+    </field>
+    <field name="amount_select">code</field>
+    <field name="amount_python_compute">
+        result = -inputs.PRESTAMO.amount  # Negativo porque es un descuento
+    </field>
+    <field name="appears_on_payslip">True</field>
+  </record>
+
+  <record id="hr_rule_input_prestamo" model="hr.rule.input">
+    <field name="name">Préstamo</field>
+    <field name="code">PRESTAMO</field>
+    <field name="input_id" ref="hr_salary_rule_prestamo"/>
+  </record>
+</odoo>

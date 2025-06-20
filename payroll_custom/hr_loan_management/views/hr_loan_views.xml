@@ -1,0 +1,63 @@
+<odoo>
+  <record id="view_hr_loan_list" model="ir.ui.view">
+    <field name="name">hr.loan.list</field>
+    <field name="model">hr.loan</field>
+    <field name="arch" type="xml">
+      <list>
+        <field name="name" string="Referencia"/>
+        <field name="employee_id" string="Empleado"/>
+        <field name="amount" string="Monto del préstamo"/>
+        <field name="installment_count" string="Número de cuotas"/>
+        <field name="start_date" string="Fecha de inicio"/>
+        <field name="state" string="Estado"/>
+      </list>
+    </field>
+  </record>
+
+  <record id="view_hr_loan_form" model="ir.ui.view">
+    <field name="name">hr.loan.form</field>
+    <field name="model">hr.loan</field>
+    <field name="arch" type="xml">
+      <form>
+        <header>
+          <button name="action_approve" type="object" string="Aprobar" class="btn-primary"/>
+          <button name="action_start" type="object" string="Iniciar" class="btn-secondary"/>
+          <button name="action_done" type="object" string="Finalizar" class="btn-success"/>
+        </header>
+
+        <sheet>
+          <group>
+            <field name="name" string="Referencia"/>
+            <field name="employee_id" string="Empleado"/>
+            <field name="currency_id" string="Moneda"/>
+            <field name="amount" string="Monto del préstamo"/>
+            <field name="installment_count" string="Número de cuotas"/>
+            <field name="installment_amount" string="Monto por cuota" readonly="1"/>
+            <field name="start_date" string="Fecha de inicio"/>
+            <field name="state" string="Estado" readonly="1"/>
+          </group>
+          <notebook>
+            <page string="Cuotas">
+              <field name="installment_ids">
+                <list editable="bottom">
+                  <field name="date_due" string="Fecha de vencimiento"/>
+                  <field name="amount" string="Monto"/>
+                  <field name="paid" string="Pagado"/>
+                </list>
+              </field>
+            </page>
+          </notebook>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_hr_loan" model="ir.actions.act_window">
+    <field name="name">Préstamos</field>
+    <field name="res_model">hr.loan</field>
+    <field name="view_mode">list,form</field>
+  </record>
+
+  <menuitem id="menu_hr_loan_root" name="Préstamos" parent="payroll.payroll_menu_root"/>
+  <menuitem id="menu_hr_loan" name="Gestión de Préstamos" parent="menu_hr_loan_root" action="action_hr_loan"/>
+</odoo>

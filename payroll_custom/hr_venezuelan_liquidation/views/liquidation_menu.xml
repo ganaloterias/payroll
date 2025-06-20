@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <menuitem id="menu_hr_liquidation_root" name="Liquidaciones" parent="payroll.payroll_menu_root" sequence="90" groups="hr_venezuelan_liquidation.group_hr_liquidation_user,hr_venezuelan_liquidation.group_hr_liquidation_manager"/>
+  <menuitem id="menu_hr_liquidation" name="Liquidaciones" parent="menu_hr_liquidation_root" action="action_hr_liquidation" sequence="10" groups="hr_venezuelan_liquidation.group_hr_liquidation_user,hr_venezuelan_liquidation.group_hr_liquidation_manager"/>
+  <menuitem id="menu_hr_liquidation_new" name="Nueva Liquidación" parent="menu_hr_liquidation_root" action="action_hr_liquidation_wizard" sequence="20" groups="hr_venezuelan_liquidation.group_hr_liquidation_manager"/>
+</odoo>

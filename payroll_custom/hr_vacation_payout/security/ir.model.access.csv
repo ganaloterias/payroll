@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_vacation_payout_user,hr.vacation.payout.user,model_hr_vacation_payout,hr.group_hr_user,1,1,1,0
+access_hr_vacation_payout_manager,hr.vacation.payout.manager,model_hr_vacation_payout,hr.group_hr_manager,1,1,1,1
+access_hr_vacation_payout_line_user,hr.vacation.payout.line.user,model_hr_vacation_payout_line,hr.group_hr_user,1,1,1,0
+access_hr_vacation_payout_line_manager,hr.vacation.payout.line.manager,model_hr_vacation_payout_line,hr.group_hr_manager,1,1,1,1
+access_hr_vacation_payout_wizard_user,hr.vacation.payout.wizard.user,model_hr_vacation_payout_wizard,hr.group_hr_user,1,1,1,1
+hr_venezuelan_liquidation.access_hr_liquidation_wizard,access_hr_liquidation_wizard,hr_venezuelan_liquidation.model_hr_liquidation_wizard,base.group_user,1,1,1,1
+hr_venezuelan_liquidation.access_hr_liquidation_payment_wizard,access_hr_liquidation_payment_wizard,hr_venezuelan_liquidation.model_hr_liquidation_payment_wizard,base.group_user,1,1,1,1

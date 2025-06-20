@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hr_vacation_payout_wizard_form" model="ir.ui.view">
+        <field name="name">hr.vacation.payout.wizard.form</field>
+        <field name="model">hr.vacation.payout.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Crear Pago de Vacaciones">
+                <sheet>
+                    <div class="alert alert-info" role="status">
+                        Seleccione el empleado, la fecha y los días de vacaciones a pagar.
+                        <br/>
+                        El sistema intentará calcular automáticamente el salario.
+                    </div>
+                    <group>
+                        <group>
+                            <field name="employee_id" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="date"/>
+                            <field name="vacaciones_dias"/>
+                            <field name="currency_id" options="{'no_create': True, 'no_open': True}"/>
+                        </group>
+                        <group>
+                            <field name="contract_id" readonly="1" invisible="not contract_id"/>
+                            <field name="work_years" readonly="1" widget="float_time" invisible="work_years == 0"/>
+                            <field name="last_wage" readonly="not employee_id"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_create_payout" string="Crear Pago" type="object" class="btn-primary" data-hotkey="q"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_hr_vacation_payout_wizard" model="ir.actions.act_window">
+        <field name="name">Crear Pago de Vacaciones</field>
+        <field name="res_model">hr.vacation.payout.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo> 

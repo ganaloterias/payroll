@@ -1,0 +1,22 @@
+{
+    'name': 'Loan Management for Employees',
+    'version': '1.1',
+    'category': 'Human Resources',
+    'depends': ['hr', 'payroll', 'base'],
+    'data': [
+        'security/hr_loan_security.xml',
+        'security/ir.model.access.csv',
+        'data/loan_sequence.xml',
+        'data/loan_deduction_category.xml',
+        'data/rule_inputs.xml',
+        'views/hr_loan_installment_views.xml',
+        'views/hr_loan_views.xml',
+        'views/hr_payslip_views.xml',
+        'views/hr_payslip_run_views.xml',
+        'views/hr_payslip_tree_views.xml',
+        'views/hr_payslip_run_tree_views.xml',
+    ],
+    'post_init_hook': 'post_init_hook',
+    'installable': True,
+    'application': True,
+}

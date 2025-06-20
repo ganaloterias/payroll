@@ -1,0 +1,23 @@
+{
+    'name': 'Custom Payroll Enhancements',
+    'version': '1.0',
+    'summary': 'Mejoras personalizadas para nómina',
+    'description': 'Extensiones a la nómina: generación de TXT, datos bancarios adicionales, dependientes de empleados.',
+    'category': 'Human Resources',
+    'author': 'Luis E. Becerra S.',
+    'website': 'https://tusitio.com',
+    'depends': ['base', 'payroll'],
+    'data': [
+        'security/security.xml',
+        'security/ir.model.access.csv',
+        'views/res_partner_bank_view.xml',
+        'views/hr_employee_views.xml',
+        'views/partner_extended_views.xml',
+        'views/payslip_actions.xml',
+        'views/payslip_report_views.xml',
+        'wizard/generate_txt_mass_wizard_view.xml',
+    ],
+    'installable': True,
+    'application': False,
+    'auto_install': False,
+}

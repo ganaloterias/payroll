@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_hr_vacation_payout" model="ir.actions.report">
+        <field name="name">Comprobante de Pago de Vacaciones</field>
+        <field name="model">hr.vacation.payout</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">hr_vacation_payout.report_vacation_payout</field>
+        <field name="report_file">hr_vacation_payout.report_vacation_payout</field>
+        <field name="print_report_name">'Vacaciones - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_hr_vacation_payout"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_vacation_payout">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2 class="text-center mb-4">Comprobante de Pago de Vacaciones</h2>
+                        
+                        <div class="row mb-4">
+                            <div class="col-6">
+                                <strong>Referencia:</strong> <span t-field="o.name"/>
+                                <br/>
+                                <strong>Fecha:</strong> <span t-field="o.date"/>
+                                <br/>
+                                <strong>Estado:</strong> 
+                                <t t-if="o.state == 'draft'">Borrador</t>
+                                <t t-elif="o.state == 'validated'">Validado</t>
+                                <t t-elif="o.state == 'done'">Pagado</t>
+                            </div>
+                            <div class="col-6">
+                                <strong>Empleado:</strong> <span t-field="o.employee_id.name"/>
+                                <br/>
+                                <strong>Departamento:</strong> <span t-field="o.employee_id.department_id.name"/>
+                                <br/>
+                                <strong>Cargo:</strong> <span t-field="o.employee_id.job_id.name"/>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <strong>Años de servicio:</strong> <span t-field="o.work_years"/> años
+                            </div>
+                        </div>
+                        
+                        <h4>Detalle del Pago</h4>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Concepto</th>
+                                    <th class="text-right">Días</th>
+                                    <th class="text-right">Monto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.line_ids" t-as="line">
+                                    <td><span t-field="line.description"/></td>
+                                    <td class="text-right"><span t-field="line.days"/></td>
+                                    <td class="text-right">
+                                        <span t-field="line.amount" 
+                                              t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="2" class="text-right"><strong>Total:</strong></td>
+                                    <td class="text-right">
+                                        <strong>
+                                            <span t-field="o.total_pago" 
+                                                  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </strong>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        
+                        <div class="row mt-5" t-if="o.notes">
+                            <div class="col-12">
+                                <strong>Observaciones:</strong>
+                                <p t-field="o.notes"/>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-5">
+                            <div class="col-4 text-center">
+                                <div class="mt-5 pt-5">
+                                    <hr/>
+                                    <strong>Empleado</strong>
+                                    <br/>
+                                    <span t-field="o.employee_id.name"/>
+                                </div>
+                            </div>
+                            <div class="col-4 text-center">
+                                <div class="mt-5 pt-5">
+                                    <hr/>
+                                    <strong>Recursos Humanos</strong>
+                                </div>
+                            </div>
+                            <div class="col-4 text-center">
+                                <div class="mt-5 pt-5">
+                                    <hr/>
+                                    <strong>Aprobado por</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo> 

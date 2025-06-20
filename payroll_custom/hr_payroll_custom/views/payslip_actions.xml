@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_generate_txt_mass_wizard_form" model="ir.ui.view">
+        <field name="name">generate.txt.mass.wizard.form</field>
+        <field name="model">generate.txt.mass.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Generar Archivo TXT Masivo">
+                <group>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="payment_date"/>
+                </group>
+                <footer>
+                    <button string="Generar TXT" type="object" name="action_generate_txt" class="btn-primary"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+    <record id="action_generate_txt_mass_wizard" model="ir.actions.act_window">
+        <field name="name">Generar Archivo TXT Masivo</field>
+        <field name="res_model">generate.txt.mass.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_generate_txt_mass_wizard_form"/>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="payroll.model_hr_payslip"/>
+        <field name="binding_type">action</field>
+    </record>
+</odoo>
