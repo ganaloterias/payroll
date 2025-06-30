@@ -1,47 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+  <!-- Vista de Lista -->
+  <record id="view_hr_liquidation_list" model="ir.ui.view">
+    <field name="name">hr.liquidation.list</field>
+    <field name="model">hr.liquidation</field>
+    <field name="arch" type="xml">
+      <list string="Liquidaciones" 
+            default_order="date_end desc, name desc"
+            decoration-success="state == 'done'"
+            decoration-info="state == 'validated'"
+            decoration-warning="state == 'draft'"
+            decoration-danger="state == 'cancelled'">
+        <field name="name" string="Referencia"/>
+        <field name="employee_id" string="Empleado"/>
+        <field name="liquidation_type" string="Tipo de Liquidación"/>
+        <field name="date_start" string="Fecha Inicio"/>
+        <field name="date_end" string="Fecha Fin"/>
+        <field name="work_period_years" string="Años de Servicio" widget="float_time"/>
+        <field name="total_liquidacion" string="Total Liquidación" widget="monetary"/>
+        <field name="currency_id" invisible="1"/>
+        <field name="state" string="Estado" widget="badge" 
+               decoration-success="state == 'done'"
+               decoration-info="state == 'validated'"
+               decoration-warning="state == 'draft'"
+               decoration-danger="state == 'cancelled'"/>
+        <field name="company_id" string="Compañía" groups="base.group_multi_company" optional="hide"/>
+      </list>
+    </field>
+  </record>
+
+  <!-- Vista de Formulario -->
   <record id="view_hr_liquidation_form" model="ir.ui.view">
+    <field name="name">hr.liquidation.form</field>
     <field name="model">hr.liquidation</field>
     <field name="arch" type="xml">
       <form string="Liquidación">
         <header>
-          <button name="action_validate" string="Validar" type="object" class="oe_highlight" invisible="state not in ['draft']"/>
-          <button name="action_done"     string="Finalizar" type="object" class="oe_highlight" invisible="state not in ['validated']"/>
-          <field name="state" widget="statusbar"/>
+          <button name="action_validate" string="Validar" type="object" 
+                  class="btn-primary" invisible="state != 'draft'"/>
+          <button name="action_done" string="Finalizar" type="object" 
+                  class="btn-success" invisible="state != 'validated'"/>
+          <button name="action_cancel" string="Cancelar" type="object" 
+                  class="btn-danger" invisible="state not in ['draft', 'validated']"/>
+          <button name="action_draft" string="Volver a Borrador" type="object" 
+                  class="btn-secondary" invisible="state not in ['validated', 'cancelled']"/>
+          <button name="action_recalculate" string="Recalcular" type="object" 
+                  class="btn-info" invisible="state != 'draft'"/>
+          <field name="state" widget="statusbar" 
+                 statusbar_visible="draft,validated,done"/>
         </header>
         <sheet>
+          <div class="oe_title">
+            <h1>
+              <field name="name" placeholder="Referencia de la liquidación"/>
+            </h1>
+          </div>
+          
           <group>
-            <group>
-              <field name="employee_id"          readonly="state!='draft'"/>
-              <field name="liquidation_type"     readonly="state!='draft'"/>
-              <field name="contract_start_date"  readonly="1"/>
-              <field name="contract_end_date"    readonly="1"/>
+            <group string="Información del Empleado">
+              <field name="employee_id" string="Empleado" 
+                     readonly="state != 'draft'" 
+                     options="{'no_create': True}"/>
+              <field name="contract_id" string="Contrato" readonly="1"/>
+              <field name="liquidation_type" string="Tipo de Liquidación" 
+                     readonly="state != 'draft'"/>
+              <field name="company_id" string="Compañía" 
+                     groups="base.group_multi_company" readonly="1"/>
             </group>
-            <group>
-              <field name="date_start"           readonly="state!='draft'"/>
-              <field name="date_end"             readonly="state!='draft'"/>
-              <field name="currency_id"          readonly="state!='draft'"/>
-              <field name="last_wage"            readonly="state!='draft'"/>
+            <group string="Período y Montos">
+              <field name="date_start" string="Fecha Inicio" 
+                     readonly="state != 'draft'"/>
+              <field name="date_end" string="Fecha Fin" 
+                     readonly="state != 'draft'"/>
+              <field name="currency_id" string="Moneda" 
+                     readonly="state != 'draft'" 
+                     options="{'no_create': True}"/>
+              <field name="last_wage" string="Último Salario" 
+                     readonly="state != 'draft'" widget="monetary"/>
             </group>
           </group>
+          
+          <group>
+            <group string="Período de Trabajo">
+              <field name="work_period_years" string="Años de Servicio" 
+                     readonly="1" widget="float_time"/>
+              <field name="work_period_months" string="Meses de Servicio" readonly="1"/>
+              <field name="work_period_days" string="Días de Servicio" readonly="1"/>
+            </group>
+            <group string="Resumen de Montos">
+              <field name="prestaciones_monto" string="Prestaciones Sociales" 
+                     readonly="1" widget="monetary"/>
+              <field name="vacaciones_monto" string="Vacaciones" 
+                     readonly="1" widget="monetary"/>
+              <field name="bono_vacacional_monto" string="Bono Vacacional" 
+                     readonly="1" widget="monetary"/>
+              <field name="preaviso_monto" string="Preaviso" 
+                     readonly="1" widget="monetary"/>
+              <field name="total_liquidacion" string="Total Liquidación" 
+                     readonly="1" widget="monetary" 
+                     class="oe_subtotal_footer_separator"/>
+            </group>
+          </group>
+          
           <notebook>
-            <page string="Montos">
-              <group>
-                <field name="prestaciones_monto"/>
-                <field name="vacaciones_monto"/>
-                <field name="bono_vacacional_monto"/>
-                <field name="preaviso_monto"/>
-                <field name="total_liquidacion"/>
-              </group>
-            </page>
-            <page string="Líneas">
-              <field name="line_ids">
+            <page string="Líneas de Liquidación" name="liquidation_lines">
+              <field name="line_ids" readonly="state != 'draft'">
                 <list editable="bottom">
-                  <field name="description"/>
-                  <field name="days"/>
-                  <field name="amount"/>
+                  <field name="sequence" string="Secuencia" widget="handle"/>
+                  <field name="description" string="Concepto"/>
+                  <field name="days" string="Días" widget="float_time"/>
+                  <field name="amount" string="Monto" widget="monetary"/>
                 </list>
               </field>
+            </page>
+            
+            <page string="Detalles del Cálculo" name="calculation_details">
+              <field name="calculation_details" string="Detalles del Cálculo" 
+                     nolabel="1" readonly="1"/>
+            </page>
+            
+            <page string="Información Adicional" name="additional_info">
+              <group>
+                <group string="Información de Nómina">
+                  <field name="last_slip_id" string="Última Nómina" readonly="1"/>
+                </group>
+                <group string="Auditoría">
+                  <field name="created_by" string="Creado por" readonly="1"/>
+                  <field name="approved_by" string="Aprobado por" readonly="1"/>
+                  <field name="validated_date" string="Fecha de Validación" readonly="1"/>
+                  <field name="done_date" string="Fecha de Finalización" readonly="1"/>
+                </group>
+              </group>
+            </page>
+            
+            <page string="Mensajes" name="messages" invisible="1">
+              <div class="oe_chatter">
+                <field name="message_follower_ids"/>
+                <field name="activity_ids"/>
+                <field name="message_ids"/>
+              </div>
             </page>
           </notebook>
         </sheet>
@@ -49,9 +146,159 @@
     </field>
   </record>
 
+  <!-- Vista de Búsqueda -->
+  <record id="view_hr_liquidation_search" model="ir.ui.view">
+    <field name="name">hr.liquidation.search</field>
+    <field name="model">hr.liquidation</field>
+    <field name="arch" type="xml">
+      <search string="Buscar Liquidaciones">
+        <field name="name" string="Referencia"/>
+        <field name="employee_id" string="Empleado"/>
+        <field name="liquidation_type" string="Tipo de Liquidación"/>
+        <field name="date_end" string="Fecha Fin"/>
+        <field name="total_liquidacion" string="Total"/>
+        <separator/>
+        <filter string="Borrador" name="draft" domain="[('state','=','draft')]"/>
+        <filter string="Validado" name="validated" domain="[('state','=','validated')]"/>
+        <filter string="Finalizado" name="done" domain="[('state','=','done')]"/>
+        <filter string="Cancelado" name="cancelled" domain="[('state','=','cancelled')]"/>
+        <separator/>
+        <filter string="Renuncia" name="resignation" domain="[('liquidation_type','=','resignation')]"/>
+        <filter string="Despido" name="dismissal" domain="[('liquidation_type','=','dismissal')]"/>
+        <filter string="Fin de Contrato" name="contract_end" domain="[('liquidation_type','=','contract_end')]"/>
+        <filter string="Acuerdo Mutuo" name="mutual_agreement" domain="[('liquidation_type','=','mutual_agreement')]"/>
+        <separator/>
+        <filter string="Este Mes" name="this_month" 
+                domain="[('date_end','>=',(context_today() + relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+        <filter string="Este Año" name="this_year" 
+                domain="[('date_end','>=',(context_today() + relativedelta(month=1, day=1)).strftime('%Y-%m-%d'))]"/>
+        <separator/>
+        <filter string="Con Monto Mayor a 0" name="with_amount" 
+                domain="[('total_liquidacion','>',0)]"/>
+        <group expand="0" string="Agrupar Por">
+          <filter string="Empleado" name="employee" 
+                  context="{'group_by': 'employee_id'}"/>
+          <filter string="Tipo de Liquidación" name="type" 
+                  context="{'group_by': 'liquidation_type'}"/>
+          <filter string="Estado" name="state" 
+                  context="{'group_by': 'state'}"/>
+          <filter string="Mes" name="month" 
+                  context="{'group_by': 'date_end:month'}"/>
+          <filter string="Año" name="year" 
+                  context="{'group_by': 'date_end:year'}"/>
+          <filter string="Compañía" name="company" 
+                  context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <!-- Vista Kanban -->
+  <record id="view_hr_liquidation_kanban" model="ir.ui.view">
+    <field name="name">hr.liquidation.kanban</field>
+    <field name="model">hr.liquidation</field>
+    <field name="arch" type="xml">
+      <kanban default_group_by="state" quick_create="false">
+        <field name="name"/>
+        <field name="employee_id"/>
+        <field name="date_end"/>
+        <field name="total_liquidacion"/>
+        <field name="currency_id"/>
+        <field name="liquidation_type"/>
+        <field name="state"/>
+        <templates>
+          <t t-name="card">
+            <div class="oe_kanban_global_click o_kanban_record_has_image_fill">
+              <div class="oe_kanban_details d-flex flex-column">
+                <div class="d-flex align-items-center mb-2">
+                  <strong class="flex-grow-1"><field name="name"/></strong>
+                  <span class="badge bg-warning" invisible="state != 'draft'">Borrador</span>
+                  <span class="badge bg-info" invisible="state != 'validated'">Validado</span>
+                  <span class="badge bg-success" invisible="state != 'done'">Finalizado</span>
+                  <span class="badge bg-danger" invisible="state != 'cancelled'">Cancelado</span>
+                </div>
+                <div class="d-flex flex-column mb-2">
+                  <span><b>Empleado:</b> <field name="employee_id"/></span>
+                  <span><b>Tipo:</b> <field name="liquidation_type"/></span>
+                  <span><b>Fecha Fin:</b> <field name="date_end"/></span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span><b>Total:</b> <field name="total_liquidacion" widget="monetary"/></span>
+                </div>
+                <div class="o_kanban_record_bottom mt-2">
+                  <div class="oe_kanban_bottom_right">
+                    <button name="action_validate" string="Validar" 
+                            type="object" class="btn btn-sm btn-primary" 
+                            invisible="state != 'draft'"/>
+                    <button name="action_done" string="Finalizar" 
+                            type="object" class="btn btn-sm btn-success" 
+                            invisible="state != 'validated'"/>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </t>
+        </templates>
+      </kanban>
+    </field>
+  </record>
+
+  <!-- Vista de Gráfico -->
+  <record id="view_hr_liquidation_graph" model="ir.ui.view">
+    <field name="name">hr.liquidation.graph</field>
+    <field name="model">hr.liquidation</field>
+    <field name="arch" type="xml">
+      <graph string="Liquidaciones" type="bar">
+        <field name="date_end" interval="month"/>
+        <field name="total_liquidacion" type="measure"/>
+      </graph>
+    </field>
+  </record>
+
+  <!-- Vista de Pivot -->
+  <record id="view_hr_liquidation_pivot" model="ir.ui.view">
+    <field name="name">hr.liquidation.pivot</field>
+    <field name="model">hr.liquidation</field>
+    <field name="arch" type="xml">
+      <pivot string="Liquidaciones">
+        <field name="date_end" interval="month" type="row"/>
+        <field name="liquidation_type" type="row"/>
+        <field name="total_liquidacion" type="measure"/>
+      </pivot>
+    </field>
+  </record>
+
+  <!-- Acción Principal -->
   <record id="action_hr_liquidation" model="ir.actions.act_window">
     <field name="name">Liquidaciones</field>
     <field name="res_model">hr.liquidation</field>
-    <field name="view_mode">list,form</field>
+    <field name="view_mode">list,form,kanban,graph,pivot</field>
+    <field name="context">{'search_default_draft': 1}</field>
+    <field name="help" type="html">
+      <p class="o_view_nocontent_smiling_face">
+        No existen liquidaciones registradas
+      </p>
+      <p>
+        Cree una nueva liquidación utilizando el botón "Nuevo" o el asistente.
+      </p>
+    </field>
+  </record>
+
+  <!-- Acción para el Wizard de Creación -->
+  <record id="action_hr_liquidation_wizard" model="ir.actions.act_window">
+    <field name="name">Crear Liquidación</field>
+    <field name="res_model">hr.liquidation.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+    <field name="binding_model_id" ref="model_hr_liquidation"/>
+    <field name="binding_type">action</field>
+  </record>
+
+  <!-- Acción para el Wizard de Pago -->
+  <record id="action_hr_liquidation_payment_wizard" model="ir.actions.act_window">
+    <field name="name">Registrar Pago</field>
+    <field name="res_model">hr.liquidation.payment.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
   </record>
 </odoo>

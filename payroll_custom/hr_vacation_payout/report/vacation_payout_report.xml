@@ -25,9 +25,7 @@
                                 <strong>Fecha:</strong> <span t-field="o.date"/>
                                 <br/>
                                 <strong>Estado:</strong> 
-                                <t t-if="o.state == 'draft'">Borrador</t>
-                                <t t-elif="o.state == 'validated'">Validado</t>
-                                <t t-elif="o.state == 'done'">Pagado</t>
+                                <span t-field="o.state"/>
                             </div>
                             <div class="col-6">
                                 <strong>Empleado:</strong> <span t-field="o.employee_id.name"/>
@@ -68,7 +66,7 @@
                                     <td colspan="2" class="text-right"><strong>Total:</strong></td>
                                     <td class="text-right">
                                         <strong>
-                                            <span t-field="o.total_pago" 
+                                            <span t-field="o.total_amount" 
                                                   t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                                         </strong>
                                     </td>
@@ -76,7 +74,7 @@
                             </tfoot>
                         </table>
                         
-                        <div class="row mt-5" t-if="o.notes">
+                        <div class="row mt-5">
                             <div class="col-12">
                                 <strong>Observaciones:</strong>
                                 <p t-field="o.notes"/>

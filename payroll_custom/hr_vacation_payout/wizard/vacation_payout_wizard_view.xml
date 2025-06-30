@@ -15,7 +15,7 @@
                         <group>
                             <field name="employee_id" options="{'no_create': True, 'no_open': True}"/>
                             <field name="date"/>
-                            <field name="vacaciones_dias"/>
+                            <field name="vacation_days"/>
                             <field name="currency_id" options="{'no_create': True, 'no_open': True}"/>
                         </group>
                         <group>

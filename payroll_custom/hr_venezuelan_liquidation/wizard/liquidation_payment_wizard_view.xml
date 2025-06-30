@@ -5,18 +5,34 @@
     <field name="model">hr.liquidation.payment.wizard</field>
     <field name="arch" type="xml">
       <form string="Registrar Pago de Liquidación">
-        <group>
-          <field name="liquidation_id"/>
-          <field name="payment_date"/>
-          <field name="payment_reference"/>
-          <field name="payment_method"/>
-        </group>
-        <group string="Notas">
-          <field name="notes" nolabel="1"/>
-        </group>
+        <sheet>
+          <div class="alert alert-info" role="status">
+            <strong>Información:</strong> Complete los datos del pago para finalizar la liquidación.
+            Esta acción cambiará el estado de la liquidación a "Finalizado".
+          </div>
+          
+          <group>
+            <group string="Liquidación">
+              <field name="liquidation_id" options="{'no_create': True, 'no_open': True}"/>
+              <field name="employee_id" readonly="1"/>
+              <field name="total_amount" readonly="1"/>
+              <field name="currency_id" readonly="1"/>
+            </group>
+            <group string="Datos del Pago">
+              <field name="payment_date"/>
+              <field name="payment_reference" placeholder="Número de transferencia, cheque, etc."/>
+              <field name="payment_method"/>
+            </group>
+          </group>
+          
+          <group string="Notas Adicionales" invisible="not notes">
+            <field name="notes" nolabel="1" placeholder="Observaciones adicionales sobre el pago..."/>
+          </group>
+        </sheet>
         <footer>
-          <button name="action_register_payment" string="Registrar Pago" type="object" class="btn-primary"/>
-          <button string="Cancelar" class="btn-secondary" special="cancel"/>
+          <button name="action_register_payment" string="Registrar Pago" 
+                  type="object" class="btn-primary" data-hotkey="q"/>
+          <button string="Cancelar" class="btn-secondary" special="cancel" data-hotkey="z"/>
         </footer>
       </form>
     </field>

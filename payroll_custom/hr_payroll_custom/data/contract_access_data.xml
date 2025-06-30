@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Permisos para payroll.contract.handler -->
+        <record id="access_payroll_contract_handler_user" model="ir.model.access">
+            <field name="name">payroll.contract.handler.user</field>
+            <field name="model_id" ref="model_payroll_contract_handler"/>
+            <field name="group_id" ref="base.group_user"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+        
+        <record id="access_payroll_contract_handler_manager" model="ir.model.access">
+            <field name="name">payroll.contract.handler.manager</field>
+            <field name="model_id" ref="model_payroll_contract_handler"/>
+            <field name="group_id" ref="base.group_system"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+        
+        <!-- Permisos para contract.migration.wizard -->
+        <record id="access_contract_migration_wizard_user" model="ir.model.access">
+            <field name="name">contract.migration.wizard.user</field>
+            <field name="model_id" ref="model_contract_migration_wizard"/>
+            <field name="group_id" ref="base.group_user"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+    </data>
+</odoo> 

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hr_contract_salary_line_list" model="ir.ui.view">
+        <field name="name">hr.contract.salary.line.list</field>
+        <field name="model">hr.contract.salary.line</field>
+        <field name="arch" type="xml">
+            <list string="Líneas de Salario Multimoneda" decoration-success="state == 'active'" decoration-danger="state == 'cancelled'">
+                <field name="name"/>
+                <field name="contract_id"/>
+                <field name="currency_id"/>
+                <field name="wage" widget="monetary"/>
+                <field name="schedule_pay"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="state" widget="badge"/>
+                <field name="is_current" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_hr_contract_salary_line_form" model="ir.ui.view">
+        <field name="name">hr.contract.salary.line.form</field>
+        <field name="model">hr.contract.salary.line</field>
+        <field name="arch" type="xml">
+            <form string="Línea de Salario Multimoneda">
+                <header>
+                    <button name="action_activate" type="object" string="Activar" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_inactivate" type="object" string="Inactivar" class="btn-secondary" invisible="state != 'active'"/>
+                    <button name="action_cancel" type="object" string="Cancelar" class="btn-danger" invisible="state not in ['draft','active','inactive']"/>
+                    <button name="action_draft" type="object" string="Volver a Borrador" class="btn-secondary" invisible="state not in ['inactive','cancelled']"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active,inactive,cancelled"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Información Principal">
+                            <field name="name"/>
+                            <field name="contract_id" options="{'no_create': True}"/>
+                            <field name="currency_id"/>
+                            <field name="wage" widget="monetary"/>
+                            <field name="wage_converted" widget="monetary" readonly="1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Vigencia y Frecuencia">
+                            <field name="schedule_pay"/>
+                            <field name="struct_id"/>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="is_current" readonly="1" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Observaciones">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_hr_contract_salary_line" model="ir.actions.act_window">
+        <field name="name">Líneas de Salario Multimoneda</field>
+        <field name="res_model">hr.contract.salary.line</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No existen líneas de salario multimoneda registradas
+            </p>
+            <p>
+                Cree una nueva línea de salario utilizando el botón "Nuevo".
+            </p>
+        </field>
+    </record>
+</odoo> 

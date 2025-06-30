@@ -1,0 +1,180 @@
+/* Estilos personalizados para el módulo de Pago de Vacaciones */
+
+.o_hr_vacation_payout {
+    .o_vacation_payout_header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        
+        h2 {
+            margin: 0;
+            font-weight: 600;
+        }
+    }
+    
+    .o_vacation_payout_summary {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        
+        .o_summary_item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e9ecef;
+            
+            &:last-child {
+                border-bottom: none;
+                font-weight: bold;
+                font-size: 1.1em;
+            }
+        }
+    }
+    
+    .o_vacation_payout_status {
+        .badge {
+            font-size: 0.85em;
+            padding: 0.5em 0.75em;
+        }
+    }
+    
+    .o_vacation_calendar {
+        .o_calendar_event {
+            &.o_vacation_event {
+                background-color: #28a745;
+                border-color: #1e7e34;
+                
+                &:hover {
+                    background-color: #218838;
+                }
+            }
+            
+            &.o_vacation_paid {
+                background-color: #17a2b8;
+                border-color: #117a8b;
+                
+                &:hover {
+                    background-color: #138496;
+                }
+            }
+        }
+    }
+    
+    .o_vacation_payout_kanban {
+        .o_kanban_record {
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            
+            &:hover {
+                box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+                transform: translateY(-2px);
+            }
+        }
+    }
+    
+    .o_vacation_payout_form {
+        .o_form_sheet {
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .o_notebook {
+            .o_notebook_page {
+                padding: 1rem;
+            }
+        }
+    }
+}
+
+/* Estilos para el wizard */
+.o_vacation_payout_wizard {
+    .o_wizard_form {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        padding: 2rem;
+        
+        .o_wizard_header {
+            text-align: center;
+            margin-bottom: 2rem;
+            
+            h3 {
+                color: #495057;
+                margin-bottom: 0.5rem;
+            }
+            
+            p {
+                color: #6c757d;
+                margin: 0;
+            }
+        }
+        
+        .o_wizard_content {
+            .form-group {
+                margin-bottom: 1.5rem;
+            }
+        }
+        
+        .o_wizard_footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #dee2e6;
+        }
+    }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .o_hr_vacation_payout {
+        .o_vacation_payout_summary {
+            .o_summary_item {
+                flex-direction: column;
+                align-items: flex-start;
+                
+                .o_summary_label {
+                    margin-bottom: 0.25rem;
+                }
+            }
+        }
+    }
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.o_vacation_payout_animation {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+/* Estados de color */
+.o_vacation_state_draft {
+    color: #ffc107;
+}
+
+.o_vacation_state_validated {
+    color: #17a2b8;
+}
+
+.o_vacation_state_done {
+    color: #28a745;
+}
+
+.o_vacation_state_rejected {
+    color: #dc3545;
+} 

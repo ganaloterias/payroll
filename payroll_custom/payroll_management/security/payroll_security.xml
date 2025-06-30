@@ -1,0 +1,12 @@
+<odoo>
+    <record id="module_category_payroll" model="ir.module.category" >
+        <field name="name">Nómina</field>
+        <field name="description">Gestión de Nómina</field>
+        <field name="sequence">16</field>
+    </record>
+
+    <record id="group_payroll_manager" model="res.groups">
+        <field name="name">Administrador de Nómina</field>
+        <field name="category_id" ref="base.module_category_human_resources"/>
+    </record>
+</odoo> 

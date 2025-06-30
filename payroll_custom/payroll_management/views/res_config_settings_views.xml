@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_res_config_settings_form_inherit_payroll" model="ir.ui.view">
+            <field name="name">view.res.config.settings.form.inherit.payroll_management</field>
+            <field name="model">res.config.settings</field>
+            <field name="priority" eval="50"/>
+            <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="inside">
+                    <app data-string="Payroll Management" string="Payroll Management" name="payroll_management" groups="payroll_management.group_payroll_manager">
+                        
+                        <!-- Configuración de Módulos -->
+                        <block title="Módulos de Nómina Personalizados" name="payroll_custom_modules_setting_container">
+                            <setting string="Gestión de Préstamos" help="Instala el módulo de gestión de préstamos (hr_loan_management).">
+                                <field name="module_hr_loan_management"/>
+                            </setting>
+                            <setting string="Pago de Vacaciones" help="Instala el módulo para el pago de vacaciones (hr_vacation_payout).">
+                                <field name="module_hr_vacation_payout"/>
+                            </setting>
+                            <setting string="Liquidaciones (VE)" help="Instala el módulo para liquidaciones según la ley venezolana (hr_venezuelan_liquidation).">
+                                <field name="module_hr_venezuelan_liquidation"/>
+                            </setting>
+                            <setting string="Seguridad Avanzada de RRHH" help="Instala el módulo de seguridad de RRHH (hr_security).">
+                                <field name="module_hr_security"/>
+                            </setting>
+                        </block>
+                        
+                        <!-- Configuración General -->
+                        <block title="Configuración General" name="payroll_general_settings">
+                            <setting string="Moneda Principal de Nómina" help="Moneda principal para cálculos de nómina">
+                                <field name="payroll_currency_id"/>
+                            </setting>
+                            <setting string="Compañía de Nómina" help="Compañía principal para gestión de nómina">
+                                <field name="payroll_company_id"/>
+                            </setting>
+                        </block>
+                        
+                        <!-- Configuración de Validaciones -->
+                        <block title="Validaciones" name="payroll_validation_settings">
+                            <setting string="Validar Cuentas Bancarias" help="Validar que los empleados tengan cuentas bancarias válidas">
+                                <field name="validate_bank_accounts"/>
+                            </setting>
+                            <setting string="Validar Identificación" help="Validar que los empleados tengan identificación válida">
+                                <field name="validate_identification"/>
+                            </setting>
+                        </block>
+                        
+                        <!-- Configuración de Límites -->
+                        <block title="Límites del Sistema" name="payroll_limits_settings">
+                            <setting string="Máximo de Cuotas de Préstamo" help="Número máximo de cuotas permitidas para préstamos">
+                                <field name="max_loan_installments"/>
+                            </setting>
+                            <setting string="Máximo de Nóminas en TXT" help="Número máximo de nóminas a procesar en archivo TXT">
+                                <field name="max_txt_payslips"/>
+                            </setting>
+                        </block>
+                        
+                        <!-- Configuración de Reportes -->
+                        <block title="Reportes" name="payroll_reports_settings">
+                            <setting string="Habilitar Reportes de Nómina" help="Habilitar reportes personalizados de nómina">
+                                <field name="enable_payroll_reports"/>
+                            </setting>
+                            <setting string="Habilitar Reportes de Préstamos" help="Habilitar reportes de préstamos">
+                                <field name="enable_loan_reports"/>
+                            </setting>
+                            <setting string="Habilitar Reportes de Vacaciones" help="Habilitar reportes de vacaciones">
+                                <field name="enable_vacation_reports"/>
+                            </setting>
+                        </block>
+                        
+                        <!-- Configuración de Integración -->
+                        <block title="Integración" name="payroll_integration_settings">
+                            <setting string="Integrar con Contabilidad" help="Integrar nómina con módulo de contabilidad">
+                                <field name="integrate_with_accounting"/>
+                            </setting>
+                            <setting string="Crear Asientos Automáticamente" help="Crear asientos contables automáticamente al procesar nóminas">
+                                <field name="auto_create_journal_entries" invisible="not integrate_with_accounting"/>
+                            </setting>
+                        </block>
+                        
+                        <!-- Configuración de Notificaciones -->
+                        <block title="Notificaciones" name="payroll_notifications_settings">
+                            <setting string="Habilitar Notificaciones por Email" help="Enviar notificaciones por email para eventos importantes">
+                                <field name="enable_email_notifications"/>
+                            </setting>
+                            <setting string="Notificar Aprobación de Préstamos" help="Enviar notificación cuando se apruebe un préstamo">
+                                <field name="notify_loan_approval" invisible="not enable_email_notifications"/>
+                            </setting>
+                            <setting string="Notificar Pagos de Vacaciones" help="Enviar notificación cuando se procese un pago de vacaciones">
+                                <field name="notify_vacation_payout" invisible="not enable_email_notifications"/>
+                            </setting>
+                        </block>
+                        
+                        <!-- Configuración de Auditoría -->
+                        <block title="Auditoría" name="payroll_audit_settings">
+                            <setting string="Habilitar Log de Auditoría" help="Registrar todas las acciones importantes en log de auditoría">
+                                <field name="enable_audit_log"/>
+                            </setting>
+                            <setting string="Días de Retención de Auditoría" help="Número de días para retener logs de auditoría">
+                                <field name="audit_retention_days" invisible="not enable_audit_log"/>
+                            </setting>
+                        </block>
+                        
+                    </app>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo> 

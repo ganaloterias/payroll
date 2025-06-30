@@ -53,18 +53,58 @@
         <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
     </record>
 
-    <!-- Reglas de acceso para empleados -->
+    <!-- Grupo para acceso a nómina -->
+    <record id="group_hr_payroll_access" model="res.groups">
+        <field name="name">Payroll: Access</field>
+        <field name="category_id" ref="module_category_hr_security"/>
+        <field name="implied_ids" eval="[(4, ref('group_hr_employee_readonly'))]"/>
+        <field name="comment">Usuarios con acceso a nómina</field>
+    </record>
+
+    <!-- Grupo para gestión de nómina -->
+    <record id="group_hr_payroll_manager" model="res.groups">
+        <field name="name">Payroll: Manager</field>
+        <field name="category_id" ref="module_category_hr_security"/>
+        <field name="implied_ids" eval="[(4, ref('group_hr_payroll_access'))]"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+    <!-- Grupo para acceso a préstamos -->
+    <record id="group_hr_loan_access" model="res.groups">
+        <field name="name">Loans: Access</field>
+        <field name="category_id" ref="module_category_hr_security"/>
+        <field name="implied_ids" eval="[(4, ref('group_hr_employee_readonly'))]"/>
+        <field name="comment">Usuarios con acceso a gestión de préstamos</field>
+    </record>
+
+    <!-- Grupo para gestión de préstamos -->
+    <record id="group_hr_loan_manager" model="res.groups">
+        <field name="name">Loans: Manager</field>
+        <field name="category_id" ref="module_category_hr_security"/>
+        <field name="implied_ids" eval="[(4, ref('group_hr_loan_access'))]"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+    <!-- Grupo para acceso a vacaciones -->
+    <record id="group_hr_vacation_access" model="res.groups">
+        <field name="name">Vacations: Access</field>
+        <field name="category_id" ref="module_category_hr_security"/>
+        <field name="implied_ids" eval="[(4, ref('group_hr_leave_readonly'))]"/>
+        <field name="comment">Usuarios con acceso a gestión de vacaciones</field>
+    </record>
+
+    <!-- Grupo para gestión de vacaciones -->
+    <record id="group_hr_vacation_manager" model="res.groups">
+        <field name="name">Vacations: Manager</field>
+        <field name="category_id" ref="module_category_hr_security"/>
+        <field name="implied_ids" eval="[(4, ref('group_hr_vacation_access'))]"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+    <!-- Regla básica para empleados - solo usuarios autorizados -->
     <record id="hr_employee_security_rule" model="ir.rule">
         <field name="name">HR Employee Security Rule</field>
         <field name="model_id" ref="hr.model_hr_employee"/>
-        <field name="domain_force">['!', ('id', 'in', user.env.ref('hr_security.group_hr_no_access').users.ids)]</field>
-        <field name="groups" eval="[(4, ref('group_hr_base'))]"/>
-    </record>
-
-    <!-- Reglas de acceso para ausencias -->
-    <record id="hr_leave_security_rule" model="ir.rule">
-        <field name="name">HR Leave Security Rule</field>
-        <field name="model_id" ref="hr_holidays.model_hr_leave"/>
         <field name="domain_force">['!', ('id', 'in', user.env.ref('hr_security.group_hr_no_access').users.ids)]</field>
         <field name="groups" eval="[(4, ref('group_hr_base'))]"/>
     </record>

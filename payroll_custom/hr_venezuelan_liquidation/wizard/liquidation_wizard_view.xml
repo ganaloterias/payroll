@@ -5,21 +5,35 @@
     <field name="model">hr.liquidation.wizard</field>
     <field name="arch" type="xml">
       <form string="Crear Liquidación">
-        <group>
+        <sheet>
+          <div class="alert alert-info" role="status">
+            <strong>Información:</strong> Complete los datos para crear una nueva liquidación.
+            El sistema validará automáticamente la información del empleado y contrato.
+          </div>
+          
           <group>
-            <field name="employee_id"/>
-            <field name="date_end"/>
+            <group string="Datos del Empleado">
+              <field name="employee_id" options="{'no_create': True, 'no_open': True}"/>
+              <field name="liquidation_type"/>
+              <field name="date_end"/>
+            </group>
+            <group string="Información del Contrato" invisible="not contract_id">
+              <field name="contract_id" readonly="1"/>
+              <field name="contract_start_date" readonly="1"/>
+              <field name="last_wage" readonly="1"/>
+              <field name="currency_id" readonly="1"/>
+              <field name="work_years" readonly="1" widget="float_time"/>
+            </group>
           </group>
-          <group>
-            <field name="reason"/>
+          
+          <group string="Observaciones" invisible="not notes">
+            <field name="notes" nolabel="1" placeholder="Observaciones adicionales sobre la liquidación..."/>
           </group>
-        </group>
-        <group string="Observaciones">
-          <field name="notes" nolabel="1"/>
-        </group>
+        </sheet>
         <footer>
-          <button name="action_create_liquidation" string="Crear Liquidación" type="object" class="btn-primary"/>
-          <button string="Cancelar" class="btn-secondary" special="cancel"/>
+          <button name="action_create_liquidation" string="Crear Liquidación" 
+                  type="object" class="btn-primary" data-hotkey="q"/>
+          <button string="Cancelar" class="btn-secondary" special="cancel" data-hotkey="z"/>
         </footer>
       </form>
     </field>

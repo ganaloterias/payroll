@@ -1,0 +1,11 @@
+<odoo>
+  <data noupdate="1">
+    <record id="seq_hr_contract_salary_line" model="ir.sequence">
+      <field name="name">Secuencia Línea de Salario Contrato</field>
+      <field name="code">hr.contract.salary.line</field>
+      <field name="prefix">SL/</field>
+      <field name="padding">5</field>
+      <field name="company_id" eval="False"/>
+    </record>
+  </data>
+</odoo> 

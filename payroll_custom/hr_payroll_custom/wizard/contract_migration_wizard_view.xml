@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_contract_migration_wizard_form" model="ir.ui.view">
+        <field name="name">contract.migration.wizard.form</field>
+        <field name="model">contract.migration.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Migración de Contratos a Multimoneda">
+                <sheet>
+                    <div class="alert alert-info" role="status">
+                        <strong>Información:</strong> Este asistente le permitirá migrar contratos existentes 
+                        al nuevo sistema de soporte multimoneda. Los contratos se mantendrán intactos y se 
+                        crearán líneas de salario adicionales.
+                    </div>
+                    
+                    <group>
+                        <group string="Selección de Contratos">
+                            <field name="contract_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                            <field name="contracts_count" readonly="1"/>
+                            <field name="contracts_with_salary" readonly="1"/>
+                            <field name="contracts_without_salary" readonly="1"/>
+                        </group>
+                        <group string="Configuración de Migración">
+                            <field name="currency_id"/>
+                            <field name="create_multiple_currencies"/>
+                            <field name="additional_currencies" 
+                                   invisible="not create_multiple_currencies"
+                                   widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Resumen de Migración" name="summary">
+                            <field name="migration_summary" nolabel="1" readonly="1" 
+                                   widget="text" class="text-muted"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <footer>
+                    <button string="Analizar Contratos" type="object" name="action_analyze_contracts" 
+                            class="btn-secondary" data-hotkey="a"/>
+                    <button string="Migrar Contratos" type="object" name="action_migrate_contracts" 
+                            class="btn-primary" data-hotkey="m" 
+                            invisible="contracts_count == 0"/>
+                    <button string="Ver Contratos Migrados" type="object" name="action_view_migrated_contracts" 
+                            class="btn-info" data-hotkey="v"/>
+                    <button string="Ver Líneas de Salario" type="object" name="action_view_salary_lines" 
+                            class="btn-info" data-hotkey="l"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_contract_migration_wizard" model="ir.actions.act_window">
+        <field name="name">Migrar Contratos a Multimoneda</field>
+        <field name="res_model">contract.migration.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_contract_migration_wizard_form"/>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="hr_contract.model_hr_contract"/>
+        <field name="binding_type">action</field>
+    </record>
+
+    <menuitem id="menu_contract_migration_wizard"
+              name="Migrar Contratos"
+              parent="hr.menu_hr_root"
+              action="action_contract_migration_wizard"
+              sequence="50"/>
+</odoo> 

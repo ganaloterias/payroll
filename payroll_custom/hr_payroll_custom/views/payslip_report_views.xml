@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Heredamos y modificamos el reporte de nómina original -->
     <template id="report_payslip_custom" inherit_id="payroll.report_payslip">
-        <!-- Modificamos la tabla de información del empleado -->
         <xpath expr="//table[1]" position="replace">
             <table class="table table-sm table-bordered">
                 <tr>
@@ -35,7 +33,6 @@
             </table>
         </xpath>
 
-        <!-- Modificamos la tabla de líneas de nómina -->
         <xpath expr="//table[2]" position="replace">
             <table class="table table-sm">
                 <thead>
@@ -56,7 +53,6 @@
             </table>
         </xpath>
 
-        <!-- Modificamos el título y la firma -->
         <xpath expr="//h2" position="replace">
             <h2>Recibo de Nómina</h2>
         </xpath>

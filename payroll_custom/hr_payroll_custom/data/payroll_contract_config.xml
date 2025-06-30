@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Configuración para validación automática de contratos -->
+        <record id="payroll_contract_auto_validation" model="ir.config_parameter">
+            <field name="key">hr_payroll_custom.auto_contract_validation</field>
+            <field name="value">True</field>
+        </record>
+        
+        <!-- Configuración para mostrar advertencias -->
+        <record id="payroll_contract_show_warnings" model="ir.config_parameter">
+            <field name="key">hr_payroll_custom.show_contract_warnings</field>
+            <field name="value">True</field>
+        </record>
+        
+        <!-- Configuración para validación de monedas -->
+        <record id="payroll_contract_validate_currencies" model="ir.config_parameter">
+            <field name="key">hr_payroll_custom.validate_contract_currencies</field>
+            <field name="value">True</field>
+        </record>
+        
+        <!-- Configuración para migración automática -->
+        <record id="payroll_contract_auto_migration" model="ir.config_parameter">
+            <field name="key">hr_payroll_custom.auto_contract_migration</field>
+            <field name="value">False</field>
+        </record>
+    </data>
+</odoo> 

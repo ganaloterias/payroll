@@ -1,9 +1,9 @@
 from odoo import models, api
 from datetime import datetime
 
-class LiquidationCalculator:
-    def __init__(self, env):
-        self.env = env
+class LiquidationCalculator(models.Model):
+    _name = 'hr.liquidation.calculator'
+    _description = 'Calculadora de Liquidaciones'
 
     def calculate_work_period(self, date_start, date_end):
         delta = date_end - date_start

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Datos de ejemplo para dependientes -->
+        <record id="hr_employee_dependent_demo_1" model="hr.employee.dependent">
+            <field name="name">Juan Pérez</field>
+            <field name="birth_date">2015-03-15</field>
+            <field name="relationship">son</field>
+            <field name="employee_id" ref="hr.employee_admin"/>
+        </record>
+        
+        <record id="hr_employee_dependent_demo_2" model="hr.employee.dependent">
+            <field name="name">María Pérez</field>
+            <field name="birth_date">2018-07-22</field>
+            <field name="relationship">daughter</field>
+            <field name="employee_id" ref="hr.employee_admin"/>
+        </record>
+    </data>
+</odoo> 

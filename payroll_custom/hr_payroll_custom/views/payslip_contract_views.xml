@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hr_payslip_form_contract_multicurrency" model="ir.ui.view">
+        <field name="name">hr.payslip.form.contract.multicurrency</field>
+        <field name="model">hr.payslip</field>
+        <field name="inherit_id" ref="payroll.hr_payslip_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='contract_id']" position="after">
+                <field name="has_multicurrency_contract" invisible="1"/>
+                <field name="salary_line_id" invisible="1"/>
+                <field name="contract_warning_message" invisible="1"/>
+            </xpath>
+            
+            <xpath expr="//header" position="inside">
+                <button name="action_validate_contract" 
+                        type="object" 
+                        string="Validar Contrato" 
+                        class="btn-secondary"
+                        invisible="not employee_id or not date_from or not date_to"/>
+                <button name="action_view_contract_salary_lines" 
+                        type="object" 
+                        string="Ver Líneas de Salario" 
+                        class="btn-info"
+                        invisible="not contract_id"/>
+            </xpath>
+            
+            <xpath expr="//notebook" position="inside">
+                <page string="Información de Contrato" name="contract_info" invisible="not contract_id">
+                    <group>
+                        <group string="Estado del Contrato">
+                            <field name="has_multicurrency_contract" readonly="1" widget="boolean_toggle"/>
+                            <field name="salary_line_id" readonly="1" options="{'no_create': True}"/>
+                        </group>
+                        <group string="Advertencias" invisible="not contract_warning_message">
+                            <field name="contract_warning_message" readonly="1" nolabel="1" 
+                                   widget="text" class="text-warning"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_hr_payslip_tree_contract_multicurrency" model="ir.ui.view">
+        <field name="name">hr.payslip.tree.contract.multicurrency</field>
+        <field name="model">hr.payslip</field>
+        <field name="inherit_id" ref="payroll.hr_payslip_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='employee_id']" position="after">
+                <field name="has_multicurrency_contract" string="Multimoneda" widget="boolean_toggle"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_hr_payslip_search_contract_multicurrency" model="ir.ui.view">
+        <field name="name">hr.payslip.search.contract.multicurrency</field>
+        <field name="model">hr.payslip</field>
+        <field name="inherit_id" ref="payroll.hr_payslip_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='draft']" position="after">
+                <separator/>
+                <filter string="Con Contrato Multimoneda" name="multicurrency_contract" 
+                        domain="[('has_multicurrency_contract', '=', True)]"/>
+                <filter string="Sin Contrato Multimoneda" name="no_multicurrency_contract" 
+                        domain="[('has_multicurrency_contract', '=', False)]"/>
+                <filter string="Con Advertencias" name="with_warnings" 
+                        domain="[('contract_warning_message', '!=', False)]"/>
+            </xpath>
+            
+            <xpath expr="//filter[@name='state']" position="after">
+                <filter string="Tipo de Contrato" name="contract_type" 
+                        context="{'group_by': 'has_multicurrency_contract'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_hr_payslip_kanban_contract_multicurrency" model="ir.ui.view">
+        <field name="name">hr.payslip.kanban.contract.multicurrency</field>
+        <field name="model">hr.payslip</field>
+        <field name="inherit_id" ref="payroll.hr_payslip_view_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='employee_id']" position="after">
+                <field name="has_multicurrency_contract"/>
+                <field name="contract_warning_message"/>
+            </xpath>
+            
+            <xpath expr="//templates//t[@t-name='card']" position="inside">
+                <div class="o_kanban_record_bottom" t-if="record.has_multicurrency_contract.value">
+                    <span class="badge badge-info">Multimoneda</span>
+                </div>
+                <div class="o_kanban_record_bottom" t-if="record.contract_warning_message.value">
+                    <span class="badge badge-warning">Advertencia</span>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_hr_payslip_multicurrency_contracts" model="ir.actions.act_window">
+        <field name="name">Nóminas con Contratos Multimoneda</field>
+        <field name="res_model">hr.payslip</field>
+        <field name="view_mode">list,form,kanban</field>
+        <field name="domain">[('has_multicurrency_contract', '=', True)]</field>
+        <field name="context">{
+            'search_default_multicurrency_contract': 1,
+            'default_has_multicurrency_contract': True
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay nóminas con contratos multimoneda
+            </p>
+            <p>
+                Las nóminas con contratos multimoneda aparecerán aquí cuando se creen.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_hr_payslip_multicurrency_contracts"
+              name="Nómina Multimoneda"
+              parent="payroll.payroll_menu_root"
+              action="action_hr_payslip_multicurrency_contracts"
+              sequence="25"/>
+</odoo> 

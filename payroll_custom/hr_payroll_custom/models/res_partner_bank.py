@@ -1,4 +1,3 @@
-# models/res_partner_bank.py
 from odoo import models, fields
 
 class ResPartnerBank(models.Model):

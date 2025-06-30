@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Menú de Empleados -->
-    <record id="hr.menu_hr_root" model="ir.ui.menu">
-        <field name="groups_id" eval="[(4, ref('group_hr_base'))]"/>
+    <!-- Acción para gestión de seguridad -->
+    <record id="action_hr_security_management" model="ir.actions.act_window">
+        <field name="name">Gestión de Seguridad HR</field>
+        <field name="res_model">res.groups</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain" eval="[('category_id', '=', ref('module_category_hr_security'))]"/>
+        <field name="context" eval="{'default_category_id': ref('module_category_hr_security')}"/>
+        <field name="groups_id" eval="[(4, ref('group_hr_employee_manager'))]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay grupos de seguridad configurados
+            </p>
+            <p>
+                Configure los grupos de seguridad para controlar el acceso a los módulos de RRHH.
+            </p>
+        </field>
     </record>
 
-    <!-- Menú de Ausencias -->
-    <record id="hr_holidays.menu_hr_holidays_root" model="ir.ui.menu">
-        <field name="groups_id" eval="[(4, ref('group_hr_base'))]"/>
-    </record>
+    <!-- Menú para gestión de seguridad -->
+    <menuitem id="menu_hr_security_management"
+              name="Gestión de Seguridad"
+              parent="payroll.payroll_menu_root"
+              action="action_hr_security_management"
+              sequence="100"
+              groups="group_hr_employee_manager"/>
 </odoo> 

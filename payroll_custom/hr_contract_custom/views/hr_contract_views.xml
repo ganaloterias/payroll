@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hr_contract_form_multicurrency" model="ir.ui.view">
+        <field name="name">hr.contract.form.multicurrency</field>
+        <field name="model">hr.contract</field>
+        <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Salarios Multimoneda">
+                    <field name="salary_line_ids" context="{'default_contract_id': id}" >
+                        <list editable="bottom">
+                            <field name="name"/>
+                            <field name="currency_id"/>
+                            <field name="wage" widget="monetary"/>
+                            <field name="schedule_pay"/>
+                            <field name="struct_id"/>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="state" widget="badge"/>
+                            <field name="is_current" widget="boolean_toggle"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo> 

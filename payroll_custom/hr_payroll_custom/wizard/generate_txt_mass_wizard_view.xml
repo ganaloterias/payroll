@@ -5,14 +5,35 @@
         <field name="model">generate.txt.mass.wizard</field>
         <field name="arch" type="xml">
             <form string="Generar Archivo TXT Masivo">
-                <group>
-                    <field name="date_from"/>
-                    <field name="date_to"/>
-                    <field name="payment_date"/>
-                </group>
+                <sheet>
+                    <div class="alert alert-info" role="status">
+                        <strong>Información:</strong> Seleccione el período para generar el archivo TXT de nóminas.
+                        El sistema validará automáticamente los datos antes de la generación.
+                    </div>
+                    
+                    <group>
+                        <group string="Período de Nóminas">
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="payment_date"/>
+                        </group>
+                        <group string="Resumen" invisible="payslip_count == 0">
+                            <field name="payslip_count" readonly="1"/>
+                            <field name="total_amount" readonly="1" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    
+                    <div class="alert alert-warning" role="status" invisible="payslip_count > 1000">
+                        <strong>Advertencia:</strong> Se procesarán <field name="payslip_count"/> nóminas. 
+                        Para mejor rendimiento, se recomienda procesar máximo 1000 nóminas por lote.
+                    </div>
+                </sheet>
                 <footer>
-                    <button string="Generar TXT" type="object" name="action_generate_txt" class="btn-primary"/>
-                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                    <button string="Generar TXT" type="object" name="action_generate_txt" 
+                            class="btn-primary" data-hotkey="q" 
+                            invisible="payslip_count == 0"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel" data-hotkey="z"/>
                 </footer>
             </form>
         </field>

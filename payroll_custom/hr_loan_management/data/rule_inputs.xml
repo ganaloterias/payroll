@@ -1,5 +1,4 @@
 <odoo>
-  <!-- Definir primero la categoría de deducción (loan_deduction_category.xml se carga antes) -->
   <record id="hr_salary_rule_prestamo" model="hr.salary.rule">
     <field name="name">Descuento por Préstamo</field>
     <field name="code">PRESTAMO</field>

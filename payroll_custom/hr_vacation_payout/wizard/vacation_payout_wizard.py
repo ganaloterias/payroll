@@ -11,7 +11,7 @@ class HrVacationPayoutWizard(models.TransientModel):
 
     employee_id = fields.Many2one('hr.employee', string='Empleado', required=True)
     date = fields.Date(string='Fecha de Pago', required=True, default=fields.Date.context_today)
-    vacaciones_dias = fields.Float(string='Días de Vacaciones', required=True, default=15.0)
+    vacation_days = fields.Float(string='Días de Vacaciones', required=True, default=15.0)
     currency_id = fields.Many2one('res.currency', string='Moneda', 
                                   default=lambda self: self.env.company.currency_id.id, required=True)
     last_wage = fields.Monetary(string='Último Salario', currency_field='currency_id', readonly=True)
@@ -89,14 +89,14 @@ class HrVacationPayoutWizard(models.TransientModel):
         if not self.last_wage or self.last_wage <= 0:
             raise UserError(_("El salario debe ser mayor que cero."))
             
-        if not self.vacaciones_dias or self.vacaciones_dias <= 0:
+        if not self.vacation_days or self.vacation_days <= 0:
             raise UserError(_("Los días de vacaciones deben ser mayores que cero."))
             
         # Crear registro de pago de vacaciones
         payout_vals = {
             'employee_id': self.employee_id.id,
             'date': self.date,
-            'vacaciones_dias': self.vacaciones_dias,
+            'vacation_days': self.vacation_days,
             'last_wage': self.last_wage,
             'currency_id': self.currency_id.id,
         }

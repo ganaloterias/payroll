@@ -157,18 +157,48 @@ class HrVacationPayout(models.Model):
 
     @api.depends('employee_id', 'date')
     def _compute_work_years(self):
+        """Calcular años de servicio de forma más precisa"""
         for rec in self:
             if rec.employee_id and rec.contract_id and rec.date:
-                delta = rec.date - rec.contract_id.date_start
-                rec.work_years = round(delta.days / 365.0, 1)  # Redondear a 1 decimal
+                # Calcular años de servicio desde el inicio del contrato hasta la fecha
+                start_date = rec.contract_id.date_start
+                end_date = rec.date
+                
+                if start_date and end_date and end_date >= start_date:
+                    # Calcular diferencia en días
+                    delta = end_date - start_date
+                    days = delta.days
+                    
+                    # Convertir a años con precisión decimal
+                    years = days / 365.25  # Usar 365.25 para considerar años bisiestos
+                    rec.work_years = round(years, 1)
+                else:
+                    rec.work_years = 0.0
             else:
                 rec.work_years = 0.0
 
     @api.depends('work_years')
     def _compute_vacation_bonus(self):
+        """Calcular días de bono vacacional según LOTTT"""
         for rec in self:
             # Según LOTTT Venezuela, el bono vacacional es igual a los días de vacaciones
-            rec.vacation_bonus_days = round(rec.vacation_days, 2)  # Redondear a 2 decimales
+            rec.vacation_bonus_days = round(rec.vacation_days, 2)
+
+    @api.depends('work_years', 'vacation_days')
+    def _compute_vacation_days_according_law(self):
+        """Calcular días de vacaciones según años de servicio (LOTTT)"""
+        for rec in self:
+            if rec.work_years >= 0:
+                # Según LOTTT Venezuela:
+                # - 15 días mínimo
+                # - Aumenta 1 día por cada año de servicio hasta 30 días máximo
+                base_days = 15
+                additional_days = min(int(rec.work_years), 15)  # Máximo 15 días adicionales
+                calculated_days = base_days + additional_days
+                
+                # Si no se han especificado días manualmente, usar el cálculo automático
+                if not rec.vacation_days or rec.vacation_days == 15.0:  # Valor por defecto
+                    rec.vacation_days = calculated_days
 
     @api.depends('vacation_days', 'vacation_bonus_days', 'last_wage')
     def _compute_amounts(self):
@@ -188,14 +218,12 @@ class HrVacationPayout(models.Model):
                 rec.total_amount = 0.0
                 continue
             
-            daily_wage = round(rec.last_wage / 30.0, 2)  # Factor diario según ley venezolana, redondeado
+            # Factor diario según ley venezolana (LOTTT)
+            daily_wage = round(rec.last_wage / 30.0, 2)
             
             rec.vacation_amount = round(rec.vacation_days * daily_wage, 2)
             rec.vacation_bonus_amount = round(rec.vacation_bonus_days * daily_wage, 2)
             rec.total_amount = round(rec.vacation_amount + rec.vacation_bonus_amount, 2)
-            
-            # No crear líneas aquí para evitar errores en campos nulos
-            # Las líneas se crearán en el método write y create
 
     @api.depends('line_ids', 'work_years')
     def _compute_calculation_details(self):
@@ -355,7 +383,7 @@ Se utilizará esta nómina por ser la más reciente, pero se recomienda verifica
                 
     def action_fix_leave_codes(self):
         """
-        Acción para corregir los códigos de tipos de ausencia
+        Acción para corregir los tipos de ausencia
         que puedan estar generando problemas en nómina
         """
         self.ensure_one()
@@ -364,14 +392,15 @@ Se utilizará esta nómina por ser la más reciente, pero se recomienda verifica
             
         leave_type = self.leave_id.holiday_status_id
         
-        if not leave_type.code:
-            leave_type.sudo().write({'code': 'VACATION'})
+        # Verificar que el tipo de ausencia tenga el nombre correcto
+        if 'vacación' not in leave_type.name.lower() and 'vacation' not in leave_type.name.lower():
+            leave_type.sudo().write({'name': 'Vacaciones'})
             return {
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
                 'params': {
-                    'title': _('Código Corregido'),
-                    'message': _('Se ha asignado el código VACATION al tipo de ausencia.'),
+                    'title': _('Nombre Corregido'),
+                    'message': _('Se ha corregido el nombre del tipo de ausencia.'),
                     'sticky': False,
                     'type': 'success',
                 }
@@ -382,7 +411,7 @@ Se utilizará esta nómina por ser la más reciente, pero se recomienda verifica
                 'tag': 'display_notification',
                 'params': {
                     'title': _('Información'),
-                    'message': _('El tipo de ausencia ya tiene el código: %s') % leave_type.code,
+                    'message': _('El tipo de ausencia ya tiene el nombre correcto: %s') % leave_type.name,
                     'sticky': False,
                     'type': 'info',
                 }
@@ -393,45 +422,53 @@ Se utilizará esta nómina por ser la más reciente, pero se recomienda verifica
         """
         Método para ejecutar desde el shell o un cron job
         Corrige todos los tipos de ausencia relacionados con vacaciones
-        que no tengan código.
+        que no tengan el nombre correcto.
         """
-        # Buscar todos los tipos de ausencia que parezcan vacaciones y no tengan código
+        # Buscar todos los tipos de ausencia que parezcan vacaciones
         leave_types = self.env['hr.leave.type'].search([
-            '|', ('name', 'ilike', 'vaca'), ('name', 'ilike', 'vacation'),
-            ('code', '=', False)
+            '|', ('name', 'ilike', 'vaca'), ('name', 'ilike', 'vacation')
         ])
         
         count = 0
         for lt in leave_types:
-            lt.sudo().write({'code': 'VACATION'})
-            count += 1
-            
-        _logger.info("Se han corregido %s tipos de ausencia sin código.", count)
+            # Asegurar que tengan el nombre correcto
+            if 'vacación' not in lt.name.lower() and 'vacation' not in lt.name.lower():
+                lt.sudo().write({'name': 'Vacaciones'})
+                count += 1
+                
+        _logger.info("Se han corregido %s tipos de ausencia para vacaciones.", count)
         return count
 
     def _create_leave_record(self):
         """Crear un registro de ausencia en hr.leave"""
         self.ensure_one()
         
-        # Buscar un tipo de ausencia para vacaciones
+        # Buscar un tipo de ausencia para vacaciones por nombre
         leave_type = self.env['hr.leave.type'].search([
-            ('code', '=', 'VACATION'),
+            ('name', 'ilike', 'vacación'),
             '|', ('company_id', '=', self.company_id.id), ('company_id', '=', False)
         ], limit=1)
         
         if not leave_type:
+            # Si no encuentra por "vacación", buscar por "vacation"
             leave_type = self.env['hr.leave.type'].search([
-                ('name', 'ilike', 'vaca'),
+                ('name', 'ilike', 'vacation'),
                 '|', ('company_id', '=', self.company_id.id), ('company_id', '=', False)
             ], limit=1)
         
         if not leave_type:
-            raise UserError(_("No se encontró un tipo de ausencia para vacaciones. Por favor, configure uno."))
-        
-        # Verificar si el tipo de ausencia tiene código, si no, se lo asignamos
-        if not leave_type.code:
-            _logger.warning("El tipo de ausencia para vacaciones no tiene código. Asignando código predeterminado 'VACATION'.")
-            leave_type.sudo().write({'code': 'VACATION'})
+            # Si no encuentra ninguno, crear uno nuevo
+            leave_type = self.env['hr.leave.type'].create({
+                'name': 'Vacaciones',
+                'color': 3,  # Verde
+                'time_type': 'leave',
+                'request_unit': 'day',
+                'requires_allocation': 'no',
+                'employee_requests': 'yes',
+                'leave_validation_type': 'hr',
+                'allocation_validation_type': 'hr',
+            })
+            _logger.info("Tipo de ausencia para vacaciones creado automáticamente")
         
         # Crear el registro de ausencia
         leave_vals = {
@@ -517,10 +554,19 @@ Se utilizará esta nómina por ser la más reciente, pero se recomienda verifica
             
         leave_type = self.leave_id.holiday_status_id
         
-        # Mostrar información sobre el código
-        if not leave_type.code:
-            msg = _("¡ADVERTENCIA! Este tipo de ausencia no tiene código asignado, lo que puede causar errores en nómina.")
-            self.env.user.notify_warning(message=msg, title=_("Tipo de Ausencia Sin Código"), sticky=True)
+        # Verificar que el tipo de ausencia tenga el nombre correcto
+        if 'vacación' not in leave_type.name.lower() and 'vacation' not in leave_type.name.lower():
+            msg = _("¡ADVERTENCIA! Este tipo de ausencia no tiene el nombre correcto para vacaciones.")
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Tipo de Ausencia Incorrecto'),
+                    'message': msg,
+                    'sticky': True,
+                    'type': 'warning',
+                }
+            }
         
         return {
             'name': _('Tipo de Ausencia'),
@@ -529,4 +575,89 @@ Se utilizará esta nómina por ser la más reciente, pero se recomienda verifica
             'res_id': leave_type.id,
             'view_mode': 'form',
             'target': 'current',
+        }
+
+    @api.constrains('vacation_days')
+    def _check_vacation_days_limits(self):
+        """Validar límites de días de vacaciones según LOTTT"""
+        for record in self:
+            if record.vacation_days < 15:
+                raise ValidationError(_("Los días de vacaciones no pueden ser menores a 15 según la LOTTT."))
+            
+            if record.vacation_days > 30:
+                raise ValidationError(_("Los días de vacaciones no pueden exceder 30 según la LOTTT."))
+            
+            # Validar que coincida con años de servicio
+            if record.work_years >= 0:
+                expected_days = 15 + min(int(record.work_years), 15)
+                if record.vacation_days > expected_days:
+                    raise ValidationError(_(
+                        "Los días de vacaciones (%s) exceden lo permitido para %s años de servicio (%s días)."
+                    ) % (record.vacation_days, record.work_years, expected_days))
+
+    @api.constrains('last_wage')
+    def _check_last_wage(self):
+        """Validar que el salario sea positivo"""
+        for record in self:
+            if record.last_wage <= 0:
+                raise ValidationError(_("El salario debe ser mayor que cero."))
+
+    @api.model
+    def get_dashboard_stats(self):
+        """Obtener estadísticas para el dashboard"""
+        today = fields.Date.today()
+        start_of_month = today.replace(day=1)
+        start_of_year = today.replace(month=1, day=1)
+        
+        # Estadísticas generales
+        total_payouts = self.search_count([])
+        total_amount = sum(self.search([]).mapped('total_amount'))
+        
+        # Estadísticas por estado
+        draft_count = self.search_count([('state', '=', 'draft')])
+        validated_count = self.search_count([('state', '=', 'validated')])
+        done_count = self.search_count([('state', '=', 'done')])
+        rejected_count = self.search_count([('state', '=', 'rejected')])
+        
+        # Estadísticas del mes actual
+        month_payouts = self.search_count([
+            ('date', '>=', start_of_month),
+            ('date', '<=', today)
+        ])
+        month_amount = sum(self.search([
+            ('date', '>=', start_of_month),
+            ('date', '<=', today)
+        ]).mapped('total_amount'))
+        
+        # Estadísticas del año actual
+        year_payouts = self.search_count([
+            ('date', '>=', start_of_year),
+            ('date', '<=', today)
+        ])
+        year_amount = sum(self.search([
+            ('date', '>=', start_of_year),
+            ('date', '<=', today)
+        ]).mapped('total_amount'))
+        
+        # Top empleados por monto
+        top_employees = self.read_group(
+            [('state', '=', 'done')],
+            ['employee_id', 'total_amount:sum'],
+            ['employee_id'],
+            limit=5,
+            orderby='total_amount DESC'
+        )
+        
+        return {
+            'total_payouts': total_payouts,
+            'total_amount': total_amount,
+            'draft_count': draft_count,
+            'validated_count': validated_count,
+            'done_count': done_count,
+            'rejected_count': rejected_count,
+            'month_payouts': month_payouts,
+            'month_amount': month_amount,
+            'year_payouts': year_payouts,
+            'year_amount': year_amount,
+            'top_employees': top_employees,
         }
