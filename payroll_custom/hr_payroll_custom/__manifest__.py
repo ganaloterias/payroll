@@ -1,9 +1,11 @@
 {
-    'name': 'Custom Payroll Enhancements',
+    'name': 'Mejoras Personalizadas de Nómina',
     'version': '18.0.1.0.0',
     'summary': 'Mejoras personalizadas para nómina con optimizaciones de rendimiento',
     'description': """
         Extensiones optimizadas a la nómina con las siguientes características:
+        
+        Características principales:
         * Generación masiva de archivos TXT para nómina con validaciones previas
         * Extensiones de datos bancarios para Venezuela
         * Gestión de dependientes de empleados
@@ -14,10 +16,20 @@
         * Wizard de migración de contratos existentes
         * Mejoras de rendimiento y arquitectura
         * Validaciones robustas y manejo de errores
+        
+        Funcionalidades avanzadas:
+        * Optimización de cálculos de nómina
+        * Integración con múltiples módulos HR
+        * Validación automática de datos bancarios
+        * Gestión de dependientes familiares
+        * Reportes personalizados de nómina
+        * Interfaz mejorada para usuarios
+        * Auditoría completa de transacciones
+        * Soporte para múltiples monedas
     """,
     'category': 'Human Resources/Payroll',
     'author': 'Luis E. Becerra S.',
-    'website': 'https://tusitio.com',
+    'website': 'https://github.com/Kowalsky98/',
     'depends': [
         'base', 
         'payroll', 
@@ -48,7 +60,7 @@
     ],
     'demo': [],
     'installable': True,
-    'application': False,
+    'application': True,
     'auto_install': False,
     'license': 'LGPL-3',
     'post_init_hook': 'post_init_hook',

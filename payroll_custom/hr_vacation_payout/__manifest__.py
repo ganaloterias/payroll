@@ -31,8 +31,8 @@
         * Dashboard con análisis
         * UX simplificada y mejorada
     """,
-    'author': 'Tu Empresa',
-    'website': 'https://www.tuempresa.com',
+    'author': 'Luis E. Becerra S.',
+    'website': 'https://github.com/Kowalsky98/',
     'license': 'LGPL-3',
     'depends': [
         'hr',

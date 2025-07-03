@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'HR Security Management',
+    'name': 'Gestión de Seguridad de RRHH',
     'version': '18.0.1.0.0',
     'category': 'Human Resources/Security',
     'summary': 'Control de acceso avanzado para módulos de RRHH',
@@ -12,7 +12,8 @@
         * Grupos de seguridad específicos para cada funcionalidad
         * Reglas de acceso personalizadas
         * Gestión de permisos por roles
-        * Auditoría de acceso
+        * Auditoría de acceso y cambios
+        * Protección de datos sensibles
         
         Módulos cubiertos:
         * Empleados y contratos
@@ -21,9 +22,17 @@
         * Préstamos a empleados
         * Liquidaciones
         * Reportes y análisis
+        
+        Funcionalidades de seguridad:
+        * Control de acceso por niveles
+        * Validación de permisos en tiempo real
+        * Registro de actividades de usuarios
+        * Protección contra acceso no autorizado
+        * Configuración flexible de roles
+        * Integración con sistema de autenticación
     """,
-    'author': 'Tu Empresa',
-    'website': 'https://www.tuempresa.com',
+    'author': 'Luis E. Becerra S.',
+    'website': 'https://github.com/Kowalsky98/',
     'depends': [
         'base', 
         'hr', 
@@ -38,7 +47,7 @@
     'demo': [],
     'post_init_hook': 'post_init_hook',
     'installable': True,
-    'application': False,
+    'application': True,
     'auto_install': False,
     'license': 'LGPL-3',
 }

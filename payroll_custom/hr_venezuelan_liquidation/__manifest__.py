@@ -37,8 +37,8 @@
         * Secuencias lógicas y únicas
         * Cálculos precisos según ley venezolana
     """,
-    'author': 'Tu Empresa',
-    'website': 'https://www.tuempresa.com',
+    'author': 'Luis E. Becerra S.',
+    'website': 'https://github.com/Kowalsky98/',
     'depends': [
         'hr',
         'payroll',
@@ -49,19 +49,14 @@
         'web',
     ],
     'data': [
-        # Security first
         'security/liquidation_security.xml',
         'security/security.xml',
         'security/ir.model.access.csv',
-        # Data files
         'data/liquidation_sequence.xml',
-        # Wizard views
         'wizard/liquidation_wizard_view.xml',
         'wizard/liquidation_payment_wizard_view.xml',
-        # Main views
         'views/liquidation_views.xml',
         'views/liquidation_menu.xml',
-        # Reports
         'report/liquidation_report.xml',
     ],
     'demo': [],

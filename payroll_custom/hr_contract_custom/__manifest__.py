@@ -20,8 +20,8 @@
         * Fase 3: Integración con otros módulos
         * Fase 4: Validaciones y mejoras
     """,
-    'author': 'Tu Empresa',
-    'website': 'https://www.tuempresa.com',
+    'author': 'Luis E. Becerra S.',
+    'website': 'https://github.com/Kowalsky98/',
     'depends': [
         'base', 
         'hr', 
@@ -41,7 +41,7 @@
     'demo': [],
     'post_init_hook': 'post_init_hook',
     'installable': True,
-    'application': False,
+    'application': True,
     'auto_install': False,
     'license': 'LGPL-3',
 } 
