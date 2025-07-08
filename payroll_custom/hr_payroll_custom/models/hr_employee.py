@@ -12,17 +12,6 @@ class HrEmployee(models.Model):
         help="Hijos dependientes del empleado"
     )
 
-    dependent_children_count = fields.Integer(
-        string="Número de Hijos",
-        compute="_compute_dependent_children_count",
-        store=True
-    )
-
-    @api.depends('dependent_children_ids')
-    def _compute_dependent_children_count(self):
-        for employee in self:
-            employee.dependent_children_count = len(employee.dependent_children_ids)
-
     def action_add_child(self):
         self.ensure_one()
         return {

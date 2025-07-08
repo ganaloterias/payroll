@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_hr_employee_dependent_user,hr.employee.dependent.user,model_hr_employee_dependent,base.group_user,1,1,1,1
+access_hr_employee_dependent_hr_user,hr.employee.dependent.hr.user,model_hr_employee_dependent,hr.group_hr_user,1,1,1,1
+access_hr_employee_dependent_hr_manager,hr.employee.dependent.hr.manager,model_hr_employee_dependent,hr.group_hr_manager,1,1,1,1
 access_generate_txt_mass_wizard,generate.txt.mass.wizard,model_generate_txt_mass_wizard,base.group_user,1,1,1,1

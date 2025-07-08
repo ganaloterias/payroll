@@ -8,7 +8,6 @@
             <xpath expr="//page[@name='personal_information']/group/group[@name='emergency']" position="after">
                 <group string="Información Familiar">
                     <separator string="Hijos Dependientes"/>
-                    <field name="dependent_children_count" readonly="1" widget="statinfo" string="Número de Hijos"/>
                     <field name="dependent_children_ids" widget="one2many_list"
                         string="Hijos" options="{'no_create': True}" readonly="0">
                         <list editable="bottom">
@@ -22,8 +21,7 @@
                     <button name="action_add_child" type="object"
                         string="Añadir Hijo" class="btn-primary"/>
                     <button name="action_view_dependents" type="object"
-                        string="Ver Todos" class="btn-secondary" 
-                        invisible="dependent_children_count == 0"/>
+                        string="Ver Todos" class="btn-secondary"/>
                 </group>
             </xpath>
         </field>
